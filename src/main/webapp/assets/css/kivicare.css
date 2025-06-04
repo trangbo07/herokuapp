@@ -18992,6 +18992,7 @@ footer .footer-blog-post .post-blog .post-title {
 }
 .logo-main .logo-normal {
   display: block;
+  width: 120px;
 }
 
 @media (max-width: 1199.98px) {
