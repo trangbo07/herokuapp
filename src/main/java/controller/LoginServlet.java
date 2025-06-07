@@ -39,7 +39,6 @@ public class LoginServlet extends HttpServlet {
 
                 // Điều hướng theo loại tài khoản
                 if (account instanceof AccountStaff) {
-
                     out.println("thành công vào trang admin");
 //                    response.sendRedirect("admin/dashboard.jsp");
                 } else if (account instanceof AccountPharmacist) {
