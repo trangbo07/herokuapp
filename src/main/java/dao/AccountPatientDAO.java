@@ -2,28 +2,36 @@ package dao;
 
 import model.AccountPatient;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class AccountPatientDAO {
-    private DBContext db = DBContext.getInstance();
+    public static AccountPatient getAccountPatient(String username, String password) {
+        DBContext db = DBContext.getInstance();
+        AccountPatient patient = null;
 
-    public AccountPatient checkLogin(Connection conn, String username, String password) throws SQLException {
-        String query = "SELECT * FROM AccountPatient WHERE username = ? AND password = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, username);
-            ps.setString(2, password);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    AccountPatient patient = new AccountPatient();
-                    patient.setAccount_patient_id(rs.getInt("account_patient_id"));
-                    patient.setUsername(rs.getString("username"));
-                    patient.setPassword(rs.getString("password"));
-                    patient.setEmail(rs.getString("email"));
-                    patient.setStatus(rs.getString("status"));
-                    return patient;
-                }
+        try {
+            String sql = """
+                         SELECT * FROM AccountPatient WHERE username = ? AND password = ?
+                         """;
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                patient = new AccountPatient(
+                        rs.getInt("account_patient_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("status")
+                );
             }
+        } catch (Exception e) {
+            return null;
         }
-        return null;
-    }
 
+        return patient;
+    }
 }
+

@@ -1,33 +1,37 @@
 package dao;
 
 import model.AccountPharmacist;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class AccountPharmacistDAO {
-    private DBContext db = DBContext.getInstance();
+    public static AccountPharmacist getAccountPharmacist(String username, String password) {
+        DBContext db = DBContext.getInstance();
+        AccountPharmacist pharmacist = null;
 
-    public AccountPharmacist checkLogin(Connection conn, String username, String password) throws SQLException {
-        String query = "SELECT * FROM AccountPharmacist WHERE username = ? AND password = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, username);
-            ps.setString(2, password);
+        try {
+            String sql = """
+                         SELECT * FROM AccountPharmacist WHERE username = ? AND password = ?
+                         """;
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    AccountPharmacist pharmacist = new AccountPharmacist();
-                    pharmacist.setAccount_pharmacist_id(rs.getInt("account_pharmacist_id"));
-                    pharmacist.setUsername(rs.getString("username"));
-                    pharmacist.setPassword(rs.getString("password"));
-                    pharmacist.setEmail(rs.getString("email"));
-                    pharmacist.setStatus(rs.getString("status"));
-                    pharmacist.setImg(rs.getString("img"));
-                    return pharmacist;
-                }
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                pharmacist = new AccountPharmacist(
+                        rs.getInt("account_pharmacist_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("status"),
+                        rs.getString("img")
+                );
             }
+        } catch (Exception e) {
+            return null;
         }
-        return null;
+
+        return pharmacist;
     }
 }

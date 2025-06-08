@@ -20,6 +20,13 @@ public class LoginServlet extends HttpServlet {
     private final AccountDAO accountDAO = new AccountDAO();
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Chuyển hướng sang trang login.html khi có GET request
+        request.getRequestDispatcher("view/login.html").forward(request, response);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -29,9 +36,7 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        try (Connection conn = DBContext.getInstance().getConnection()) {
-
-            Object account = accountDAO.checkLogin(conn, username, password);
+            Object account = accountDAO.checkLogin(username, password);
 
             if (account != null) {
                 HttpSession session = request.getSession();
@@ -39,25 +44,18 @@ public class LoginServlet extends HttpServlet {
 
                 // Điều hướng theo loại tài khoản
                 if (account instanceof AccountStaff) {
-                    out.println("thành công vào trang admin");
-//                    response.sendRedirect("admin/dashboard.jsp");
+                    response.sendRedirect("home");
                 } else if (account instanceof AccountPharmacist) {
-                    out.println("thành công vào trang dược sĩ");
-                  //  response.sendRedirect("pharmacist/home.jsp");
+                    response.sendRedirect("home");
                 } else if (account instanceof AccountPatient) {
-                    out.println("thành công vào trang bệnh nhân");
-                   // response.sendRedirect("patient/home.jsp");
+                    response.sendRedirect("home");
                 } else {
-                    out.println("lỗi");
-                    //response.sendRedirect("login.jsp?error=unknownrole");
+                    request.getRequestDispatcher("view/login.html").forward(request, response);
                 }
 
             } else {
-                out.println("lỗi");
+                System.out.println(account.toString());
+                out.println("lỗi 1");
             }
-
-        } catch (Exception e) {
-            out.println("lỗi");
-        }
     }
 }
