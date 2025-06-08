@@ -7,7 +7,7 @@ public class AccountStaff {
     public AccountStaff() {
     }
 
-    public AccountStaff(String status, String img, String role, String email, String password, String username, int account_staff_id) {
+    public AccountStaff(int account_staff_id, String username, String password, String email, String role, String img, String status) {
         this.status = status;
         this.img = img;
         this.role = role;

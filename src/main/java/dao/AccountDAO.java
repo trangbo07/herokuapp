@@ -4,52 +4,27 @@ import model.AccountStaff;
 import model.AccountPharmacist;
 import model.AccountPatient;
 
-import java.sql.Connection;
-
 public class AccountDAO {
+    AccountStaffDAO accountStaffDAO = new AccountStaffDAO();
+    AccountPharmacistDAO accountPharmacistDAO = new AccountPharmacistDAO();
+    AccountPatientDAO accountPatientDAO = new AccountPatientDAO();
 
-    private final AccountStaffDAO staffDAO = new AccountStaffDAO();
-    private final AccountPharmacistDAO pharmacistDAO = new AccountPharmacistDAO();
-    private final AccountPatientDAO patientDAO = new AccountPatientDAO();
-
-
-    public Object checkLogin(Connection conn, String username, String password) {
-
-        try {
-            AccountStaff staff = staffDAO.checkLogin(conn, username, password);
-            if (staff != null) return staff;
-
-            AccountPharmacist pharmacist = pharmacistDAO.checkLogin(conn, username, password);
-            if (pharmacist != null) return pharmacist;
-
-            AccountPatient patient = patientDAO.checkLogin(conn, username, password);
-            if (patient != null) return patient;
-
-        } catch (Exception e) {
-            System.out.println("Error in AccountDAO.checkLogin: " + e.getMessage());
+    public Object checkLogin(String username, String password) {
+        AccountStaff staff = AccountStaffDAO.getAccountStaff(username, password);
+        if (staff != null) {
+            return staff;
         }
 
-        return null;
-    }
-
-    public AccountStaff asStaff(Object obj) {
-        if (obj instanceof AccountStaff) {
-            return (AccountStaff) obj;
+        AccountPharmacist pharmacist = AccountPharmacistDAO.getAccountPharmacist(username, password);
+        if (pharmacist != null) {
+            return pharmacist;
         }
-        return null;
-    }
 
-    public AccountPharmacist asPharmacist(Object obj) {
-        if (obj instanceof AccountPharmacist) {
-            return (AccountPharmacist) obj;
+        AccountPatient patient = AccountPatientDAO.getAccountPatient(username, password);
+        if (patient != null) {
+            return patient;
         }
-        return null;
-    }
 
-    public AccountPatient asPatient(Object obj) {
-        if (obj instanceof AccountPatient) {
-            return (AccountPatient) obj;
-        }
         return null;
     }
 }

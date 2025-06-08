@@ -1,34 +1,38 @@
 package dao;
 
 import model.AccountStaff;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class AccountStaffDAO {
-    private DBContext db = DBContext.getInstance();
+    public static AccountStaff getAccountStaff(String username, String password) {
+        DBContext db = DBContext.getInstance();
+        AccountStaff staff = null;
 
-    public AccountStaff checkLogin(Connection conn, String username, String password) throws SQLException {
-        String query = "SELECT * FROM AccountStaff WHERE username = ? AND password = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, username);
-            ps.setString(2, password);
+        try {
+            String sql = """
+                         SELECT * FROM AccountStaff WHERE username = ? AND password = ?
+                         """;
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    AccountStaff staff = new AccountStaff();
-                    staff.setAccount_staff_id(rs.getInt("account_staff_id"));
-                    staff.setUsername(rs.getString("username"));
-                    staff.setPassword(rs.getString("password"));
-                    staff.setRole(rs.getString("role"));
-                    staff.setEmail(rs.getString("email"));
-                    staff.setStatus(rs.getString("status"));
-                    staff.setImg(rs.getString("img"));
-                    return staff;
-                }
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                staff = new AccountStaff(
+                        rs.getInt("account_staff_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("role"),
+                        rs.getString("email"),
+                        rs.getString("status"),
+                        rs.getString("img")
+                );
             }
+        } catch (Exception e) {
+            return null;
         }
-        return null;
+
+        return staff;
     }
 }
