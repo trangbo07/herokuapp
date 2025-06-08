@@ -33,5 +33,34 @@ public class AccountPatientDAO {
 
         return patient;
     }
+    public static boolean registerPatient(String username ,String email, String password, String status) {
+        DBContext db = DBContext.getInstance();
+
+        try {
+            // Kiểm tra email đã tồn tại chưa
+            String checkSql = "SELECT COUNT(*) FROM AccountPatient WHERE email = ?";
+            PreparedStatement checkStmt = db.getConnection().prepareStatement(checkSql);
+            checkStmt.setString(1, email);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return false; // Email đã tồn tại
+            }
+
+            // Chưa tồn tại → thêm mới
+            String sql = "INSERT INTO AccountPatient(username, password, email, status) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = db.getConnection().prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, email);
+            ps.setString(4, status);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi đăng ký: " + e.getClass().getName() + " - " + e.getMessage());
+            return false;
+        }
+    }
 }
 

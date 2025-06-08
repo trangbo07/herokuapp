@@ -29,7 +29,7 @@
       
       <!-- Custom Css -->
       <link rel="stylesheet" href="../assets/css/custom.min.css?v=1.4.1" />
-      
+
       <!-- Rtl Css -->
       <link rel="stylesheet" href="../assets/css/rtl.min.css?v=1.4.1" />
       
@@ -84,17 +84,37 @@
                      </span>
                   </a>
                </div>
-               <form method="post">
-                  <div class="custom-form-field">
-                     <input
-                        type="email"
-                        name="user-name"
-                        placeholder="Your email id *"
-                        class="form-control mb-5"
-                        required
-                        pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
-                        title="Please enter a valid Gmail address (e.g., example@gmail.com)">
-                  </div>
+                <form method="post" action="/Project_SWP391_war_exploded/register">
+                   <!-- Trường email -->
+                    <div class="custom-form-field">
+                        <input
+                                type="text"
+                                name="username"
+                                class="form-control mb-5"
+                                title="username" />
+                    </div>
+                   <div class="custom-form-field">
+                       <input
+                               type="email"
+                               name="email"
+                               placeholder="Your email *"
+                               class="form-control mb-5"
+                               required
+                               pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+                               title="Please enter a valid Gmail address (e.g., example@gmail.com)" />
+                   </div>
+
+                   <!-- Trường mật khẩu -->
+                   <div class="custom-form-field">
+                       <input
+                               type="password"
+                               name="password"
+                               placeholder="Your password *"
+                               class="form-control mb-5"
+                               required
+                               minlength="6"
+                               title="Password must be at least 6 characters" />
+                   </div>
 
                   <p class="mb-5"> Your personal data will be used to support
                      your experience throughout this
@@ -120,7 +140,7 @@
                   <p class="my-0 text-capitalize">Already have an account?</p>
                   <h5 class="sign_up_btn mb-0 ms-2">
                      <div class="iq-btn-container">
-                        <a class="iq-button iq-btn-link text-capitalize" href="login.html">
+                        <a class="iq-button iq-btn-link text-capitalize" href="view/login.html">
                            sign in
                            <span class="btn-link-icon">
                               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="none">
@@ -217,8 +237,34 @@
     
     <!-- fslightbox Script -->
     <script src="../assets/js/plugins/fslightbox.js" defer></script>
-    
-    
+
+    <script>
+        const form = document.querySelector("form");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const data = {
+                username: form.username.value,
+                email: form.email.value,
+                password: form.password.value,
+            };
+
+            const res = await fetch("/Project_SWP391_war_exploded/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await res.json(); // server trả JSON
+            if (result.success) {
+                alert("Đăng ký thành công");
+            } else {
+                alert("Đăng ký thất bại: " + result.message);
+            }
+        });
+    </script>
+
     
     
     
