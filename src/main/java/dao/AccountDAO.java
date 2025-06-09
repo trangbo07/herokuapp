@@ -10,17 +10,17 @@ public class AccountDAO {
     AccountPatientDAO accountPatientDAO = new AccountPatientDAO();
 
     public Object checkLogin(String username, String password) {
-        AccountStaff staff = AccountStaffDAO.getAccountStaff(username, password);
+        AccountStaff staff = AccountStaffDAO.checkLogin(username, password);
         if (staff != null) {
             return staff;
         }
 
-        AccountPharmacist pharmacist = AccountPharmacistDAO.getAccountPharmacist(username, password);
+        AccountPharmacist pharmacist = AccountPharmacistDAO.checkLogin(username, password);
         if (pharmacist != null) {
             return pharmacist;
         }
 
-        AccountPatient patient = AccountPatientDAO.getAccountPatient(username, password);
+        AccountPatient patient = AccountPatientDAO.checkLogin(username, password);
         if (patient != null) {
             return patient;
         }

@@ -5,17 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class AccountStaffDAO {
-    public static AccountStaff getAccountStaff(String username, String password) {
+    public static AccountStaff checkLogin(String username, String password) {
         DBContext db = DBContext.getInstance();
         AccountStaff staff = null;
 
         try {
-            String sql = """
-                         SELECT * FROM AccountStaff WHERE username = ? AND password = ?
+            String sql = """    
+                         SELECT * FROM AccountStaff WHERE (username = ? OR email = ?) AND password = ?
                          """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, username);
-            statement.setString(2, password);
+            statement.setString(2, username);
+            statement.setString(3, password);
 
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
