@@ -10,6 +10,7 @@ import model.AccountPharmacist;
 import model.AccountStaff;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 @MultipartConfig
@@ -25,6 +26,10 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -41,11 +46,9 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/pharmacist");
             } else if (account instanceof AccountPatient) {
                 response.sendRedirect(request.getContextPath() + "/patient");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/login?error=invalidrole");
             }
         } else {
-            response.sendRedirect("view/login.html?error=1");
+            out.print("{\"success\": false, \"message\": \"Sai tên đăng nhập hoặc mật khẩu\"}");
         }
     }
 }
