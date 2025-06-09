@@ -109,12 +109,29 @@
                             <div class="custom-form-field">
                                 <input
                                         type="password"
+                                        id="password"
                                         name="password"
                                         placeholder="Your password *"
                                         class="form-control mb-5"
                                         required
                                         minlength="6"
-                                        title="Password must be at least 6 characters" />
+                                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"
+                                        title="Password must be at least 6 characters with uppercase, lowercase, and number"
+                                />
+                            </div>
+
+                            <div class="custom-form-field">
+                                <input
+                                        type="password"
+                                        id="re_password"
+                                        name="re_password"
+                                        placeholder="Confirm password *"
+                                        class="form-control mb-5"
+                                        required
+                                        minlength="6"
+                                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"
+                                        title="Password must be at least 6 characters with uppercase, lowercase, and number"
+                                />
                             </div>
 
                             <p class="mb-5"> Your personal data will be used to support
@@ -265,7 +282,19 @@
             alert("Có lỗi xảy ra khi đăng ký. Vui lòng thử lại sau.");
         }
     });
+
+    document.getElementById("registrationForm").addEventListener("submit", function (e) {
+        const pass = document.getElementById("password").value;
+        const rePass = document.getElementById("re_password").value;
+
+        if (pass !== rePass) {
+            e.preventDefault(); // ngăn gửi form
+            alert("Mật khẩu xác nhận không khớp!");
+            return false;
+        }
+    });
 </script>
+
 
 
 
