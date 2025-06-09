@@ -232,11 +232,7 @@
     
     <!-- fslightbox Script -->
     <script src="assets/js/plugins/fslightbox.js" defer></script>
-    
-    
-    
-    
-    
+
     <!-- Lodash Utility -->
     <script src="assets/vendor/lodash/lodash.min.js"></script>
     <!-- Utilities Functions -->
@@ -253,34 +249,47 @@
     <!-- Kivicare Pages Script -->
     <script src="assets/js/slider.js" defer></script>
     <script src="assets/js/scroll-text.js" defer></script>
-<!--    <script>-->
-<!--        const form = document.getElementById("loginForm");-->
-<!--        const errorMessage = document.getElementById("errorMessage");-->
 
-<!--        form.addEventListener("submit", async (e) => {-->
-<!--            e.preventDefault();-->
-<!--            errorMessage.innerText = ""; // Clear thông báo cũ-->
+    <script>
+        const form = document.getElementById("loginForm");
+        const errorMessage = document.getElementById("errorMessage");
 
-<!--            try {-->
-<!--                const formData = new FormData(form);-->
-<!--                const response = await fetch("login", {-->
-<!--                    method: "POST",-->
-<!--                    body: formData-->
-<!--                });-->
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            errorMessage.textContent = ""; // Xóa thông báo cũ
 
-<!--                const result = await response.json();-->
-<!--                console.log("Server response:", result);-->
+            try {
+                const formData = new FormData(form);
+                const response = await fetch("login", {
+                    method: "POST",
+                    body: formData,
+                    redirect: "follow"
+                });
 
-<!--                if (result.success) {-->
-<!--                    window.location.href = "home"; // Chuyển hướng khi thành công-->
-<!--                } else {-->
-<!--                    errorMessage.innerText = "Đăng nhập thất bại: " + result.message;-->
-<!--                }-->
-<!--            } catch (error) {-->
-<!--                console.error("Error:", error);-->
-<!--                errorMessage.innerText = "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.";-->
-<!--            }-->
-<!--        });-->
-<!--    </script>-->
+                const contentType = response.headers.get("content-type");
+
+                if (response.redirected) {
+                    // Nếu server gửi redirect, trình duyệt sẽ tự chuyển
+                    window.location.href = response.url;
+                    return;
+                }
+
+                // Nếu là JSON thì xử lý thông báo lỗi
+                if (contentType && contentType.includes("application/json")) {
+                    const result = await response.json();
+                    if (!result.success) {
+                        errorMessage.textContent = result.message || "Đăng nhập thất bại.";
+                    }
+                } else {
+                    errorMessage.textContent = "Lỗi không xác định. Không nhận được dữ liệu JSON.";
+                }
+
+            } catch (err) {
+                console.error("Lỗi khi gửi request:", err);
+                errorMessage.textContent = "Đã xảy ra lỗi. Vui lòng thử lại.";
+            }
+        });
+    </script>
+
   </body>
 </html>
