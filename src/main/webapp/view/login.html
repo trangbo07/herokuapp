@@ -90,7 +90,7 @@
                     <div class="custom-form-field">
                         <input
                                 type="text"
-                                name="loginId"
+                                name="username"
                                 placeholder="Email or Username *"
                                 class="form-control mb-5"
                                 required
@@ -106,6 +106,7 @@
                                 minlength="6"
                                 title="Password must be at least 6 characters" />
                     </div>
+                    <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
                     <div class="flex-column flex-sm-row d-flex align-items-start justify-content-between mb-5 gap-2">
                         <label class="custom-form-field">
                             <input type="checkbox" class="mr-2">
@@ -252,31 +253,34 @@
     <!-- Kivicare Pages Script -->
     <script src="assets/js/slider.js" defer></script>
     <script src="assets/js/scroll-text.js" defer></script>
-    <script>
-        const form = document.getElementById("loginForm");
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            try {
-                const formData = new FormData(form);
-                const response = await fetch("login", {
-                    method: "POST",
-                    body: formData
-                });
+<!--    <script>-->
+<!--        const form = document.getElementById("loginForm");-->
+<!--        const errorMessage = document.getElementById("errorMessage");-->
 
-                const result = await response.json();
-                console.log("Server response:", result);
-                
-                if (result.success) {
-                    alert("Đăng nhập thành công");
-                    window.location.href = "home";
-                } else {
-                    alert("Đăng nhập thất bại: " + result.message);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.");
-            }
-        });
-    </script></body>
+<!--        form.addEventListener("submit", async (e) => {-->
+<!--            e.preventDefault();-->
+<!--            errorMessage.innerText = ""; // Clear thông báo cũ-->
+
+<!--            try {-->
+<!--                const formData = new FormData(form);-->
+<!--                const response = await fetch("login", {-->
+<!--                    method: "POST",-->
+<!--                    body: formData-->
+<!--                });-->
+
+<!--                const result = await response.json();-->
+<!--                console.log("Server response:", result);-->
+
+<!--                if (result.success) {-->
+<!--                    window.location.href = "home"; // Chuyển hướng khi thành công-->
+<!--                } else {-->
+<!--                    errorMessage.innerText = "Đăng nhập thất bại: " + result.message;-->
+<!--                }-->
+<!--            } catch (error) {-->
+<!--                console.error("Error:", error);-->
+<!--                errorMessage.innerText = "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.";-->
+<!--            }-->
+<!--        });-->
+<!--    </script>-->
+  </body>
 </html>

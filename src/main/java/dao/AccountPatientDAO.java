@@ -2,9 +2,6 @@ package dao;
 
 import model.AccountPatient;
 import java.sql.*;
-import java.util.ArrayList;
-import java.sql.Connection;
-import util.DBUtil;
 
 public class AccountPatientDAO {
     public static AccountPatient getAccountPatient(String username, String password) {
@@ -62,40 +59,6 @@ public class AccountPatientDAO {
 
         } catch (Exception e) {
             System.err.println("Lỗi khi đăng ký: " + e.getClass().getName() + " - " + e.getMessage());
-            return false;
-        }
-    }
-
-    public static boolean loginWithEmail(String email, String password) {
-        String sql = "SELECT * FROM AccountPatient WHERE email = ? AND password = ? AND status = 'Enable'";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, email);
-            ps.setString(2, password);
-            
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // Trả về true nếu tìm thấy user
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean loginWithUsername(String username, String password) {
-        String sql = "SELECT * FROM AccountPatient WHERE username = ? AND password = ? AND status = 'Enable'";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, username);
-            ps.setString(2, password);
-            
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // Trả về true nếu tìm thấy user
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
