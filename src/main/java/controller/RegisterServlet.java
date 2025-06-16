@@ -37,7 +37,7 @@ public class RegisterServlet extends HttpServlet {
 
 
         if (!password.equals(re_password)) {
-            jsonResponse = new JsonResponse(false, "Mật khẩu xác nhận không khớp.");
+            jsonResponse = new JsonResponse(false, "Password not match with re-password. Please try again.");
             mapper.writeValue(response.getWriter(), jsonResponse);
             return;
         }
@@ -45,7 +45,7 @@ public class RegisterServlet extends HttpServlet {
 
         if (accountPatientDAO.getAccountByEmailOrUsername(username) != null ||
             accountPatientDAO.getAccountByEmailOrUsername(email) != null) {
-            jsonResponse = new JsonResponse(false, "Tên đăng nhập hoặc email đã tồn tại.");
+            jsonResponse = new JsonResponse(false, "Username or email is already taken. Please try another.");
             mapper.writeValue(response.getWriter(), jsonResponse);
             return;
         }
@@ -54,9 +54,9 @@ public class RegisterServlet extends HttpServlet {
         boolean created = accountPatientDAO.registerPatient(username, email, password, "https://jbagy.me/wp-content/uploads/2025/03/Hinh-nen-don-gian-dang-yeu-cho-nu-4.png", "Enable");
 
         if (created) {
-            jsonResponse = new JsonResponse(true, "Đăng ký thành công", "login.html");
+            jsonResponse = new JsonResponse(true, "Sign up successful ", "login.html");
         } else {
-            jsonResponse = new JsonResponse(false, "Đăng ký thất bại, vui lòng thử lại.");
+            jsonResponse = new JsonResponse(false, "sign up fails, please try again !.");
         }
 
 

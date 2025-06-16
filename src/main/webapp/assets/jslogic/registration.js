@@ -12,7 +12,7 @@ form.addEventListener("submit", async (e) => {
     const re_password = form.re_password.value;
 
     if (password !== re_password) {
-        errorMessage.textContent = "Mật khẩu xác nhận không khớp!";
+        errorMessage.textContent = "Password not match !";
         errorMessage.style.display = "block";
         return;
     }
@@ -37,14 +37,14 @@ form.addEventListener("submit", async (e) => {
         const result = await res.json();
 
         if (result.success) {
-            window.location.href = result.redirectUrl || "login";
+            window.location.href = result.redirectUrl ;
         } else {
-            errorMessage.textContent = result.message || "Đăng ký thất bại.";
+            errorMessage.textContent = result.message || "Login fail .";
             errorMessage.style.display = "block";
         }
     } catch (err) {
-        console.error("Lỗi gửi request:", err);
-        errorMessage.textContent = "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.";
+        console.error("Error request:", err);
+        errorMessage.textContent = "error with sign up. Try again.";
         errorMessage.style.display = "block";
     }
 });
