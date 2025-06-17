@@ -17,7 +17,7 @@ import model.AccountStaff;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/login")
+@WebServlet("/api/login")
 public class LoginServlet extends HttpServlet {
 
     private final AccountDAO accountDAO = new AccountDAO();

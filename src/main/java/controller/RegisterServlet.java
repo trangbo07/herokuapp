@@ -13,7 +13,7 @@ import model.AccountPatient;
 
 import java.io.IOException;
 
-@WebServlet("/register")
+@WebServlet("/api/register")
 public class RegisterServlet extends HttpServlet {
 
     private final ObjectMapper mapper = new ObjectMapper();

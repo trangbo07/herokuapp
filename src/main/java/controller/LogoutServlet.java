@@ -6,7 +6,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/logout")
+@WebServlet("/api/logout")
 public class LogoutServlet extends HttpServlet {
 
     @Override

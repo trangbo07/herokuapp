@@ -2,7 +2,7 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
     e.preventDefault(); // Ngăn chuyển trang mặc định
 
     try {
-        const res = await fetch(`/logout`, {
+        const res = await fetch(`/api/logout`, {
             method: "GET", // hoặc GET nếu servlet bạn xử lý GET
             headers: {
                 "Content-Type": "application/json"

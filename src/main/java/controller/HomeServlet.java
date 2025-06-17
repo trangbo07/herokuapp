@@ -8,7 +8,7 @@ import model.AccountStaff;
 
 import java.io.IOException;
 
-@WebServlet("/home")
+@WebServlet("/api/home")
 public class HomeServlet extends HttpServlet {
 
     @Override
