@@ -36,6 +36,7 @@ public class AccountStaffDAO {
 
         return staff;
     }
+
     public static boolean checkAccountStaff(String username, String email) {
         DBContext db = DBContext.getInstance();
 
