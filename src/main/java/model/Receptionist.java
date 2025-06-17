@@ -8,6 +8,6 @@ import lombok.*;
 @Setter
 @ToString
 public class Receptionist {
-    private int receptionist_id;
-    private String full_name, phone, account_staff_id;
+    private int receptionist_id, account_staff_id;
+    private String full_name, phone;
 }

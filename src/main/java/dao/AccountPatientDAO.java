@@ -4,7 +4,7 @@ import model.AccountPatient;
 import java.sql.*;
 
 public class AccountPatientDAO {
-    public static AccountPatient checkLogin(String username, String password) {
+    public AccountPatient checkLogin(String username, String password) {
         DBContext db = DBContext.getInstance();
         AccountPatient patient = null;
 
@@ -35,7 +35,7 @@ public class AccountPatientDAO {
         return patient;
     }
 
-    public static boolean registerPatient(String username ,String email, String password, String img, String status) {
+    public boolean registerPatient(String username ,String email, String password, String img, String status) {
         DBContext db = DBContext.getInstance();
 
         try {
@@ -66,7 +66,7 @@ public class AccountPatientDAO {
         }
     }
 
-    public static boolean updatePassword(String email, String newPassword) {
+    public boolean updatePassword(String email, String newPassword) {
         DBContext db = DBContext.getInstance();
 
         try {
@@ -83,7 +83,7 @@ public class AccountPatientDAO {
         }
     }
 
-    public static AccountPatient getAccountByEmailOrUsername(String emailOrUsername) {
+    public AccountPatient getAccountByEmailOrUsername(String emailOrUsername) {
         DBContext db = DBContext.getInstance();
         AccountPatient patient = null;
 

@@ -25,8 +25,9 @@ public class AccountPharmacistDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("email"),
-                        rs.getString("status"),
-                        rs.getString("img")
+                        rs.getString("img"),
+                        rs.getString("status")
+
                 );
             }
         } catch (Exception e) {
@@ -95,8 +96,9 @@ public class AccountPharmacistDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("email"),
-                        rs.getString("status"),
-                        rs.getString("img")
+                        rs.getString("img"),
+                        rs.getString("status")
+
                 );
             }
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentDAO {
-    public static List<Appointment> getAppointmentByDoctorID(int doctor_id) {
+    public  List<Appointment> getAppointmentByDoctorID(int doctor_id) {
         DBContext db = DBContext.getInstance();
         List<Appointment> appointments = new ArrayList<>();
 
@@ -20,12 +20,12 @@ public class AppointmentDAO {
             statement.setInt(1, doctor_id);
 
             ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 Appointment appointment = new Appointment(
                         rs.getInt("appointment_id"),
-                        rs.getInt("appointment_id"),
-                        rs.getInt("appointment_id"),
-                        rs.getInt("appointment_id"),
+                        rs.getInt("doctor_id"),
+                        rs.getInt("patient_id"),
+                        rs.getInt("receptionist_id"),
                         rs.getString("appointment_datetime"),
                         rs.getString("shift"),
                         rs.getString("status"),
@@ -43,6 +43,4 @@ public class AppointmentDAO {
             return appointments;
         }
     }
-
-
 }

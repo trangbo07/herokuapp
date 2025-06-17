@@ -8,6 +8,6 @@ import lombok.*;
 @Setter
 @ToString
 public class AdminBusiness {
-    private int admin_id;
-    private String full_name,department, phone, account_staff_id;
+    private int admin_id, account_staff_id;
+    private String full_name, department, phone;
 }
