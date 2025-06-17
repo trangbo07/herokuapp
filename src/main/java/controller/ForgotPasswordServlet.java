@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@WebServlet("/reset")
+@WebServlet("/api/reset")
 public class ForgotPasswordServlet extends HttpServlet {
     private final AccountDAO accountDAO = new AccountDAO();
     private final ObjectMapper mapper = new ObjectMapper(); // Jackson JSON mapper

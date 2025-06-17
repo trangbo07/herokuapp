@@ -20,7 +20,7 @@ async function submitForgotPassword() {
     otpLoading.style.display = 'block';
 
     try {
-        const response = await fetch("/reset", {
+        const response = await fetch("/api/reset", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ async function submitOTP() {
     }
 
     try {
-        const response = await fetch("/reset", {
+        const response = await fetch("/api/reset", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
