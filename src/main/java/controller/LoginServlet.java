@@ -39,8 +39,8 @@ public class LoginServlet extends HttpServlet {
         JsonResponse jsonResponse;
 
         if (account != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("user", account);
+                HttpSession session = request.getSession();
+                session.setAttribute("user", account);
 
             // Xử lý redirectUrl theo role nếu là staff
             String redirectUrl = "view/home.html"; // default fallback

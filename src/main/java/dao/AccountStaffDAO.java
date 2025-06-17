@@ -1,6 +1,7 @@
 package dao;
 
-import model.AccountStaff;
+import model.*;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -11,8 +12,8 @@ public class AccountStaffDAO {
 
         try {
             String sql = """    
-                         SELECT * FROM AccountStaff WHERE (username = ? OR email = ?) AND password = ?
-                         """;
+                    SELECT * FROM AccountStaff WHERE (username = ? OR email = ?) AND password = ?
+                    """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, username);
             statement.setString(2, username);
@@ -37,14 +38,14 @@ public class AccountStaffDAO {
         return staff;
     }
 
-    public static boolean checkAccountStaff(String username, String email) {
+    public boolean checkAccountStaff(String username, String email) {
         DBContext db = DBContext.getInstance();
 
         try {
             String sql = """
-                     SELECT * FROM AccountStaff 
-                     WHERE username = ? OR email = ?
-                     """;
+                    SELECT * FROM AccountStaff 
+                    WHERE username = ? OR email = ?
+                    """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, username);
             statement.setString(2, email);
@@ -62,7 +63,7 @@ public class AccountStaffDAO {
     }
 
 
-    public static boolean updatePassword(String email, String newPassword) {
+    public boolean updatePassword(String email, String newPassword) {
         DBContext db = DBContext.getInstance();
 
         try {
@@ -79,15 +80,15 @@ public class AccountStaffDAO {
         }
     }
 
-    public static AccountStaff getAccountByEmailOrUsername(String emailOrUsername) {
+    public AccountStaff getAccountByEmailOrUsername(String emailOrUsername) {
         DBContext db = DBContext.getInstance();
         AccountStaff staff = null;
 
         try {
             String sql = """
-                     SELECT * FROM AccountStaff 
-                     WHERE username = ? OR email = ?
-                     """;
+                    SELECT * FROM AccountStaff 
+                    WHERE username = ? OR email = ?
+                    """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, emailOrUsername);
             statement.setString(2, emailOrUsername);
@@ -98,10 +99,10 @@ public class AccountStaffDAO {
                         rs.getInt("account_staff_id"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        rs.getString("role"),
                         rs.getString("email"),
-                        rs.getString("status"),
-                        rs.getString("img")
+                        rs.getString("role"),
+                        rs.getString("img"),
+                        rs.getString("status")
                 );
             }
 
@@ -113,6 +114,93 @@ public class AccountStaffDAO {
         }
 
         return staff;
+    }
+
+    public Object getOStaffByStaffId(int account_staff_id, String role) {
+        DBContext db = DBContext.getInstance();
+        Object staffObject = null;
+
+        String roleTable = switch (role) {
+            case "Doctor" -> "Doctor";
+            case "Nurse" -> "Nurse";
+            case "Receptionist" -> "Receptionist";
+            case "AdminSystem" -> "AdminSystem";
+            case "AdminBusiness" -> "AdminBusiness";
+            default -> null;
+        };
+
+        if (roleTable == null) return null;
+
+        try {
+            String sql = "SELECT * FROM " + roleTable + " WHERE account_staff_id = ?";
+            PreparedStatement stmt = db.getConnection().prepareStatement(sql);
+            stmt.setInt(1, account_staff_id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                switch (role) {
+                    case "Doctor" -> {
+                        Doctor doctor = new Doctor(
+                                rs.getInt("doctor_id"),
+                                rs.getInt("account_staff_id"),
+                                rs.getString("full_name"),
+                                rs.getString("department"),
+                                rs.getString("phone"),
+                                rs.getString("eduLevel")
+                        );
+                        staffObject = doctor;
+                    }
+                    case "Nurse" -> {
+                        Nurse nurse = new Nurse(
+                                rs.getInt("nurse_id"),
+                                rs.getInt("account_staff_id"),
+                                rs.getString("full_name"),
+                                rs.getString("department"),
+                                rs.getString("phone"),
+                                rs.getString("eduLevel")
+                        );
+                        staffObject = nurse;
+                    }
+                    case "Receptionist" -> {
+                        Receptionist receptionist = new Receptionist(
+                                rs.getInt("receptionist_id"),
+                                rs.getInt("account_staff_id"),
+                                rs.getString("full_name"),
+                                rs.getString("phone")
+                        );
+                        staffObject = receptionist;
+                    }
+                    case "AdminSystem" -> {
+                        AdminSystem admin = new AdminSystem(
+                                rs.getInt("admin_id"),
+                                rs.getInt("account_staff_id"),
+                                rs.getString("full_name"),
+                                rs.getString("department"),
+                                rs.getString("phone")
+                        );
+                        staffObject = admin;
+                    }
+                    case "AdminBusiness" -> {
+                        AdminBusiness admin = new AdminBusiness(
+                                rs.getInt("admin_id"),
+                                rs.getInt("account_staff_id"),
+                                rs.getString("full_name"),
+                                rs.getString("department"),
+                                rs.getString("phone")
+                        );
+                        staffObject = admin;
+                    }
+                }
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return staffObject;
     }
 
 }
