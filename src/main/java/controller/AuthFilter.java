@@ -23,6 +23,9 @@ public class AuthFilter implements Filter {
 
         // Danh sách các đường dẫn được phép truy cập mà không cần đăng nhập
         if (requestURI.equals("/api/login") ||
+                requestURI.equals("/api/register") ||
+                requestURI.equals("/api/logout") ||
+                requestURI.equals("/api/reset") ||
                 requestURI.equals("/view/home.html") ||
                 requestURI.equals("/view/login.html") ||
                 requestURI.equals("/view/registration.html") ||
