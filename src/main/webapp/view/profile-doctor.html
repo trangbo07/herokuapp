@@ -62,7 +62,7 @@
         <!-- loader END -->
             <aside class="sidebar sidebar-base " id="first-tour" data-toggle="main-sidebar" data-sidebar="responsive">
                 <div class="sidebar-header d-flex align-items-center justify-content-start position-relative">
-                    <a href="home" class="navbar-brand">
+                    <a href="home-doctor.html" class="navbar-brand">
                         
                         <!--Logo start-->
                         <div class="logo-main">
@@ -134,7 +134,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link " aria-current="page"
-                                    href="../appointment.html">
+                                    href="appointment-doctor.html">
                                     <i class="icon" data-bs-toggle="tooltip" title="Appointment" data-bs-placement="right">
                                         <svg width="20" class="icon-20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -207,7 +207,7 @@
             <!--Nav Start-->
                     <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
                        <div class="container-fluid navbar-inner">
-                          <a href="home" class="navbar-brand">
+                          <a href="home-doctor.html" class="navbar-brand">
                              
                              <!--Logo start-->
                              <div class="logo-main">
@@ -233,7 +233,7 @@
                                    <ul class="iq-nav-menu list-unstyled">
                                       <li class="nav-item">
                                          <a class="nav-link menu-arrow justify-content-start "
-                                            href="home">
+                                            href="home-doctor.html">
                                             <span class="nav-text">Home</span>
                                          </a>
                                       </li>
@@ -743,130 +743,32 @@
             <div class="content-inner container-fluid pb-0" id="page_layout">
 <div class="row">
    <div class="col-lg-4">
-      <div class="card ">
-         <div class="card-body">
-            <div class="doctor-details-block">
-               <div class="doc-profile-bg bg-primary" style="height:150px;"></div>
-               <div class="doctor-profile text-center">
-                   <img id="doctor-avatar" src="" class="avatar-130 rounded-circle" alt="profile-img">
-                   <div class="text-center mt-3 pl-3 pr-3">
-                      <h4><b id="doctor-name"></b></h4>
-                      <p id="doctor-role"></p>
-                  </div>
-                  <hr>
+       <div class="card">
+           <div class="card-header d-flex justify-content-between mb-0">
+               <h3 class="mb-0">Personal Information</h3>
+           </div>
+           <div class="card-body">
+               <div class="about-info m-0 p-0">
+                   <div class="row">
+
+                       <div class="col-4 mb-1">Full Name:</div>
+                       <div class="col-8 mb-1" id="doctor-name">...</div>
+
+                       <div class="col-4 mb-1">Department:</div>
+                       <div class="col-8 mb-1" id="doctor-department">...</div>
+
+                       <div class="col-4 mb-1">Education Level:</div>
+                       <div class="col-8 mb-1" id="doctor-eduLevel">...</div>
+
+                       <div class="col-4 mb-1">Phone:</div>
+                       <div class="col-8 mb-1"><span id="doctor-phone">...</span></div>
+
+
+
+                   </div>
                </div>
-            </div>
-         </div>
-      </div>
-      <div class="card ">
-         <div class="card-header d-flex justify-content-between mb-0">
-            <h3 class="mb-0">Personal Information</h3>
-         </div>
-         <div class="card-body">
-            <div class="about-info m-0 p-0">
-               <div class="row">
-                  <div class="col-4 mb-1">Staff ID :</div>
-                  <div class="col-8 mb-1">recep1</div>
-                  <div class="col-4 mb-1">First Name:</div>
-                  <div class="col-8 mb-1">Xuan</div>
-                  <div class="col-4 mb-1">Last Name :</div>
-                  <div class="col-8 mb-1">Bach</div>
-                  <div class="col-4 mb-1">Position:</div>
-                  <div class="col-8 mb-1">Receptionist</div>
-                  <div class="col-4 mb-1">Email:</div>
-                  <div class="col-8 mb-1"><a href="mailto:biniJets24@demo.com"> biniJets24@demo.com </a></div>
-               </div>
-            </div>
-         </div>
-      </div>
-    </div>
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="card-header d-flex justify-content-between mb-0">
-                                <h3 class="mb-0">Schedule</h3>
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-inline m-0 p-0">
-                                    <li>
-                                        <h6 class="float-start mb-1">Ruby saul (Blood Check)</h6>
-                                        <small class="float-end mt-1">Today</small>
-                                        <div class="d-inline-block w-100">
-                                            <p class="badge bg-primary">09:00 AM</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <h6 class="float-start mb-1">Anna Mull (Fever)Today</h6>
-                                        <small class="float-end mt-1">Today</small>
-                                        <div class="d-inline-block w-100">
-                                            <p class="badge bg-secondary">09:15 AM</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <h6 class="float-start mb-1">Petey Cruiser (X-ray)</h6>
-                                        <small class="float-end mt-1">Today</small>
-                                        <div class="d-inline-block w-100">
-                                            <p class="badge bg-info">10:00 AM</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <h6 class="float-start mb-1">Anna Sthesia (Full body Check up)</h6>
-                                        <small class="float-end mt-1">Today</small>
-                                        <div class="d-inline-block w-100">
-                                            <p class="badge bg-success">01:00 AM</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <h6 class="float-start mb-1">Paul Molive (Operation)</h6>
-                                        <small class="float-end mt-1">Tomorrow</small>
-                                        <div class="d-inline-block w-100">
-                                            <p class="badge bg-danger mb-0">09:00 AM</p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="card ">
-                            <div class="card-header d-flex justify-content-between mb-0">
-                                <h3 class="mb-0">Experience</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table border-end border-start align-middle mb-0 rounded">
-                                        <thead class="table-dark">
-                                        <tr>
-                                            <th scope="col">Year</th>
-                                            <th scope="col">Department</th>
-                                            <th scope="col">Position</th>
-                                            <th scope="col">Hospital</th>
-                                            <th scope="col">Result</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>2016 - 2020</td>
-                                            <td>MBBS, M.D</td>
-                                            <td>Senior Doctor</td>
-                                            <td>Midtown Medical Clinic</td>
-                                            <td><span class="badge bg-success">Good</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2020 - 2022</td>
-                                            <td>M.D. of Medicine</td>
-                                            <td>Associate Prof.</td>
-                                            <td>Netherland Medical College</td>
-                                            <td><span class="badge bg-success">Excellence</span></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
+           </div>
+       </div>
         </div>
             </div>
             <!-- Footer Section Start -->
@@ -1658,7 +1560,13 @@
                 <circle cx="12.1747" cy="11.8891" r="2.63616" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                     stroke-linejoin="round"></circle>
             </svg>
-        </a>        <!-- Live Customizer end -->
+        </a>
+
+
+
+
+
+        <!-- Live Customizer end -->
         <!-- Wrapper End-->
 
 
@@ -1682,21 +1590,6 @@
           <!-- Select2 Script -->
           <script src="../assets/assets/js/plugins/select2.js" defer></script>
 
-        <script>
-            fetch("/doctor/api/profile")
-                .then(response => {
-                    if (!response.ok) throw new Error("Không đăng nhập");
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("doctor-name").textContent = data.username;
-                    document.getElementById("doctor-role").textContent = data.role;
-                    document.getElementById("doctor-avatar").src = data.img;
-                })
-                .catch(error => {
-                    console.error("Lỗi khi fetch thông tin:", error);
-                });
-        </script>
 
 
         <!-- Lodash Utility -->
@@ -1721,5 +1614,8 @@
         <!-- Icons -->
         <script src="../assets/assets/js/solid-icon-search-filter.js?v=1.4.1" defer></script>
         <script src="../assets/jslogic/logout.js" defer></script>
+    <script src="../assets/jslogic/details-doctor.js" defer></script>
+
+
     </body>
 </html>
