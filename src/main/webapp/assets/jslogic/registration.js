@@ -21,7 +21,7 @@ form.addEventListener("submit", async (e) => {
     const data = {username, email, password, re_password};
 
     try {
-        const res = await fetch(`/api/register`, {
+        const res = await fetch("/api/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -37,7 +37,7 @@ form.addEventListener("submit", async (e) => {
         const result = await res.json();
 
         if (result.success) {
-            window.location.href = result.redirectUrl ;
+            window.location.href = result.redirectUrl;
         } else {
             errorMessage.textContent = result.message || "Login fail .";
             errorMessage.style.display = "block";
