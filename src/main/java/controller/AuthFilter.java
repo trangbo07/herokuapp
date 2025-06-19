@@ -26,7 +26,6 @@ public class AuthFilter implements Filter {
                 requestURI.equals("/api/register") ||
                 requestURI.equals("/api/logout") ||
                 requestURI.equals("/api/reset") ||
-                requestURI.equals("/api/vnpay/create-payment") ||
                 requestURI.equals("/view/home.html") ||
                 requestURI.equals("/view/login.html") ||
                 requestURI.equals("/view/registration.html") ||
