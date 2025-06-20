@@ -8,6 +8,7 @@ form.addEventListener("submit", async (e) => {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const rememberme = document.getElementById("rememberme").checked;
+
     const contextPath = window.location.pathname.split('/')[1];
     const data = {username, password, rememberme};
 
