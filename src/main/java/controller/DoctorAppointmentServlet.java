@@ -3,6 +3,7 @@ package controller;
 import com.google.gson.Gson;
 import dao.AccountStaffDAO;
 import dao.AppointmentDAO;
+import dto.AppointmentDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,66 @@ public class DoctorAppointmentServlet extends HttpServlet {
     private final AppointmentDAO appointmentDAO = new AppointmentDAO();
     private final AccountStaffDAO accountStaffDAO = new AccountStaffDAO();
     private final Gson gson = new Gson();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("user") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Unauthorized\"}");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        String idParam = request.getParameter("id");
+
+        if ("detail".equalsIgnoreCase(action) && idParam != null) {
+            try {
+                int appointmentId = Integer.parseInt(idParam);
+                AppointmentDTO appointment = appointmentDAO.getAppointmentDetailWithAppointmentById(appointmentId);
+
+                if (appointment == null) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"error\":\"Appointment not found\"}");
+                    return;
+                }
+
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.print(gson.toJson(appointment));
+                out.flush();
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"Invalid appointment ID\"}");
+            }
+            return;
+        }
+
+        if ("cancel".equalsIgnoreCase(action) && idParam != null) {
+            try {
+                int appointmentId = Integer.parseInt(idParam);
+                boolean success = appointmentDAO.cancelAppointmentById(appointmentId); // bạn cần tạo hàm này trong DAO
+
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+
+                if (success) {
+                    out.print("{\"message\":\"Appointment cancelled successfully\"}");
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    out.print("{\"error\":\"Failed to cancel appointment\"}");
+                }
+                out.flush();
+
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"Invalid appointment ID\"}");
+            }
+            return;
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
