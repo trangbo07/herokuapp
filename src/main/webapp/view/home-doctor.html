@@ -51,6 +51,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,500&display=swap"
           rel="stylesheet">
+    <style>
+        #scheduleContainer {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body class="  ">
 <!-- loader Start -->
@@ -655,7 +665,7 @@
                         </h1>
                         <p class="mb-5">Have a nice day at work. Progress is excellent!</p>
                         <div class="d-flex align-items-center flex-wrap gap-3">
-                            <a class="btn btn-primary">
+                            <a class="btn btn-primary" onclick="toggleSchedule()">
                         <span class="btn-inner">
                             <span class="text d-inline-block align-middle">View Schedule</span>
                             <span class="icon d-inline-block align-middle ms-1 ps-2">
@@ -682,6 +692,38 @@
                         </span>
                             </a>
                         </div>
+                        <div id="scheduleContainer" class="mt-4 d-none">
+                              <h5>Doctor's Weekly Schedule</h5>
+                            <table class="table table-bordered text-center">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Time Slot</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                    <th>Saturday</th>
+                                    <th>Sunday</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>08:00 - 10:00</td>
+                                    <td>✅</td><td>✅</td><td></td><td>✅</td><td></td><td>✅</td><td></td>
+                                </tr>
+                                <tr>
+                                    <td>10:00 - 12:00</td>
+                                    <td></td><td>✅</td><td>✅</td><td></td><td>✅</td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <td>14:00 - 16:00</td>
+                                    <td>✅</td><td></td><td>✅</td><td></td><td></td><td></td><td>✅</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                     <div>
                         <img class="img-fluid" src="../assets/images/docter/bacsic-removebg.png" alt="dr-profile"
@@ -1961,6 +2003,7 @@
     </svg>
 </a>        <!-- Live Customizer end -->
 <!-- Wrapper End-->
+
 
 
 <!-- Library Bundle Script -->
