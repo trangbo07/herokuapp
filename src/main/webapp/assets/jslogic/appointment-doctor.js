@@ -218,3 +218,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+
+    function toggleSchedule() {
+    const container = document.getElementById("scheduleContainer");
+    container.classList.toggle("d-none");
+}
