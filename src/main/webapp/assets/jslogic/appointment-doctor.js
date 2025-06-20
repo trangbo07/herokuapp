@@ -54,16 +54,23 @@ function paginateAppointments() {
     }
 
     pageData.forEach((a, index) => {
-        const viewBtn = `<button class="btn btn-sm btn-outline-info" data-id="${a.appointment_id}" data-action="view">View</button>`;
-        const doneBtn = `<button class="btn btn-sm btn-outline-success" data-id="${a.appointment_id}" data-action="done">Done</button>`;
-        const cancelBtn = `<button class="btn btn-sm btn-outline-danger" data-id="${a.appointment_id}" data-action="cancel">Cancel</button>`;
+        const viewBtn = `<button class="btn btn-primary text-white select-patient-btn" data-appointment-id="${a.appointment_id}" data-action="view">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </button>`;
+        const cancelBtn = `<button class="btn btn-secondary text-white select-patient-btn" data-appointment-id="${a.appointment_id}" data-action="cancel">
+                                    <i class="fas fa-times-circle me-1"></i>Cancel
+                                </button>`;
 
         let actionButtons = viewBtn;
 
         // Chỉ hiển thị "Hoàn tất" và "Huỷ" nếu trạng thái không phải Cancelled hoặc Completed
         if (a.status !== "Cancelled" && a.status !== "Completed") {
-            actionButtons += doneBtn + cancelBtn;
+            actionButtons = `<div class="d-flex gap-2">
+                                ${viewBtn}
+                                ${cancelBtn}
+                            </div>`;
         }
+
 
         const row = `
         <tr>
@@ -109,39 +116,82 @@ async function countAppointmentsToday(action) {
     }
 }
 
-function handleView(id) {
+async function handleView(id) {
     console.log("View appointment", id);
-    // Ví dụ: mở offcanvas hoặc modal
     const canvas = new bootstrap.Offcanvas('#offcanvasAppointmentEdit');
     canvas.show();
 
-    // fetch(`/api/appointment/${id}`)
-    //     .then(res => res.json())
-    //     .then(data => {
-    //         // Gán data vào form
-    //         document.getElementById("appointmentTitle").innerText = data.title;
-    //         // ... các phần khác
-    //     });
+    try {
+        const res = await fetch(`/api/doctor/appointment?action=detail&id=${id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch appointment");
+        }
+
+        const data = await res.json();
+
+        document.getElementById("full_name").value = data.full_name;
+        document.getElementById("dob").value = data.dob;
+        document.getElementById("gender").value = data.gender;
+        document.getElementById("phone").value = data.phone;
+        document.getElementById("appointment_datetime").value = data.appointment_datetime;
+        document.getElementById("shift").value = data.shift;
+        document.getElementById("status").value = data.status;
+        document.getElementById("note").value = data.note || '';
+
+        const cancelBtn = document.getElementById("cancelAppointmentBtn");
+
+        document.querySelectorAll(".cancelAppointmentBtn").forEach(btn => {
+            if (data.status === 'Confirmed') {
+                btn.style.display = 'inline-block';
+                btn.onclick = () => handleCancel(id);
+            } else {
+                btn.style.display = 'none';
+                btn.onclick = null;
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching appointment:", error);
+    }
 }
 
-function handleDone(id) {
-    console.log("Mark as done", id);
+async function handleCancel(id) {
+    if (!confirm("Are you sure you want to cancel this appointment?")) return;
 
-    // fetch(`/api/appointment/done/${id}`, { method: "POST" })
-    //     .then(res => {
-    //         if (res.ok) alert("Marked as done!");
-    //     });
+    try {
+        const res = await fetch(`/api/doctor/appointment?action=cancel&id=${id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!res.ok) throw new Error("Cancel failed");
+
+        alert("Appointment cancelled successfully.");
+
+        // Ẩn offcanvas nếu đang mở
+        const canvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasAppointmentEdit'));
+        if (canvas) canvas.hide();
+
+        // Tải lại danh sách
+        await fetchAppointmentsByAction('Upcoming');
+
+    } catch (err) {
+        console.error("Cancel failed:", err);
+        alert("Failed to cancel appointment.");
+    }
 }
 
-function handleCancel(id) {
-    console.log("Cancel appointment", id);
-    // if (!confirm("Are you sure you want to cancel this appointment?")) return;
-    //
-    // fetch(`/api/appointment/cancel/${id}`, { method: "POST" })
-    //     .then(res => {
-    //         if (res.ok) alert("Cancelled successfully!");
-    //     });
-}
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -163,14 +213,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!target) return;
 
         const action = target.getAttribute("data-action");
-        const appointmentId = target.getAttribute("data-id");
+        const appointmentId = target.getAttribute("data-appointment-id");
 
         switch (action) {
             case "view":
                 handleView(appointmentId);
-                break;
-            case "done":
-                handleDone(appointmentId);
                 break;
             case "cancel":
                 handleCancel(appointmentId);
@@ -219,7 +266,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-    function toggleSchedule() {
+function toggleSchedule() {
     const container = document.getElementById("scheduleContainer");
     container.classList.toggle("d-none");
 }

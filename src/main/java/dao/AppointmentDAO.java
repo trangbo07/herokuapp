@@ -1,5 +1,6 @@
 package dao;
 
+import dto.AppointmentDTO;
 import model.Appointment;
 
 import java.sql.PreparedStatement;
@@ -126,5 +127,61 @@ public class AppointmentDAO {
 
         return appointments.isEmpty() ? null : appointments;
     }
+
+    public AppointmentDTO getAppointmentDetailWithAppointmentById(int appointmentId) {
+        DBContext db = DBContext.getInstance();
+        AppointmentDTO appointmentDTO = null;
+
+        try {
+            String sql = """
+            SELECT a.*, p.full_name, p.dob, p.gender, p.phone
+            FROM Appointment a
+            JOIN Patient p ON a.patient_id = p.patient_id
+            WHERE a.appointment_id = ?
+        """;
+
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, appointmentId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                appointmentDTO = new AppointmentDTO(
+                        rs.getInt("appointment_id"),
+                        rs.getString("appointment_datetime"),
+                        rs.getString("shift"),
+                        rs.getString("status"),
+                        rs.getString("note"),
+                        rs.getInt("patient_id"),
+                        rs.getString("full_name"),
+                        rs.getString("dob"),
+                        rs.getString("gender"),
+                        rs.getString("phone")
+                );
+            }
+
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return appointmentDTO;
+    }
+
+    public boolean cancelAppointmentById(int appointmentId) {
+        DBContext db = DBContext.getInstance();
+        String sql = "UPDATE Appointment SET status = 'Cancelled' WHERE appointment_id = ?";
+
+        try (PreparedStatement ps = db.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 }
