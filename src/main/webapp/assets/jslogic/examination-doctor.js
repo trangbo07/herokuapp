@@ -64,7 +64,6 @@ function renderAppointmentsTable() {
         row.innerHTML = `
             <td>${index + 1}</td>
             <td><i class="fas fa-user me-2"></i>${appointment.patient_id || 'N/A'}</td>
-            <td><i class="fas fa-user-circle me-2"></i>${appointment.patient_name || 'N/A'}</td>
             <td><i class="fas fa-calendar me-2"></i>${formatDate(appointment.appointment_datetime)}</td>
             <td><i class="fas fa-clock me-2"></i>${formatTime(appointment.appointment_datetime)}</td>
             <td><span class="status-badge ${statusClass}">${appointment.status || 'N/A'}</span></td>
@@ -109,33 +108,45 @@ function formatTime(dateString) {
 }
 
 // Hàm chọn bệnh nhân để khám
-function selectPatientForExamination(appointmentId) {
-    const appointment = allAppointments.find(a => a.appointment_id == appointmentId);
-    
-    if (!appointment) {
-        showAlert('Appointment not found', 'danger');
-        return;
+async function selectPatientForExamination(appointmentId) {
+    try {
+        // Gọi API lấy chi tiết bệnh nhân
+        const response = await fetch(`/api/doctor/appointment?action=detail&id=${appointmentId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Không lấy được thông tin chi tiết bệnh nhân');
+        const appointment = await response.json();
+        selectedAppointment = appointment;
+        // Cập nhật thông tin bệnh nhân dựa vào key mới
+        document.getElementById("patientId").textContent = appointment.patient_id || 'N/A';
+        document.getElementById("patientName").textContent = appointment.full_name || 'N/A';
+        document.getElementById("patientAge").textContent = calculateAge(appointment.dob) || 'N/A';
+        document.getElementById("patientGender").textContent = appointment.gender || 'N/A';
+        document.getElementById("patientPhone").textContent = appointment.phone || 'N/A';
+        document.getElementById("appointmentInfo").textContent = `${formatDate(appointment.appointment_datetime)} at ${formatTime(appointment.appointment_datetime)}`;
+        document.getElementById("patientNote").textContent = appointment.note || 'N/A';
+        // Cập nhật hidden input
+        document.getElementById("selectedAppointmentId").value = appointment.appointment_id;
+        // Chuyển sang form khám bệnh
+        document.getElementById("patientSelectionCard").style.display = "none";
+        document.getElementById("examinationCard").style.display = "block";
+        // Reset form
+        resetExaminationForm();
+    } catch (error) {
+        showAlert('Không lấy được thông tin chi tiết bệnh nhân', 'danger');
+        // Hiển thị N/A cho tất cả các trường
+        document.getElementById("patientId").textContent = 'N/A';
+        document.getElementById("patientName").textContent = 'N/A';
+        document.getElementById("patientAge").textContent = 'N/A';
+        document.getElementById("patientGender").textContent = 'N/A';
+        document.getElementById("patientPhone").textContent = 'N/A';
+        document.getElementById("appointmentInfo").textContent = 'N/A';
+        document.getElementById("patientNote").textContent = 'N/A';
     }
-
-    selectedAppointment = appointment;
-    
-    // Cập nhật thông tin bệnh nhân
-    document.getElementById("patientId").textContent = appointment.patient_id || 'N/A';
-    document.getElementById("patientName").textContent = appointment.patient_name || 'N/A';
-    document.getElementById("patientAge").textContent = calculateAge(appointment.patient_dob) || 'N/A';
-    document.getElementById("patientGender").textContent = appointment.patient_gender || 'N/A';
-    document.getElementById("patientPhone").textContent = appointment.patient_phone || 'N/A';
-    document.getElementById("appointmentInfo").textContent = `${formatDate(appointment.appointment_datetime)} at ${formatTime(appointment.appointment_datetime)}`;
-    
-    // Cập nhật hidden input
-    document.getElementById("selectedAppointmentId").value = appointment.appointment_id;
-    
-    // Chuyển sang form khám bệnh
-    document.getElementById("patientSelectionCard").style.display = "none";
-    document.getElementById("examinationCard").style.display = "block";
-    
-    // Reset form
-    resetExaminationForm();
 }
 
 // Hàm tính tuổi
