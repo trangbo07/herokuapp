@@ -8,5 +8,5 @@ import lombok.*;
 @Setter
 @ToString
 public class MedicineRecords {
-    private int medicineRecord_id, patient_id;
+    private int medicineRecord_id, patient_id, appointment_id;
 }

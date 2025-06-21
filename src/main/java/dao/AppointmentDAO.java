@@ -194,6 +194,21 @@ public class AppointmentDAO {
         }
     }
 
+    public boolean updateAppointmentStatus(int appointmentId, String status) {
+        DBContext db = DBContext.getInstance();
+        String sql = "UPDATE Appointment SET status = ? WHERE appointment_id = ?";
+
+        try (PreparedStatement ps = db.getConnection().prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, appointmentId);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<AppointmentDTO> searchAppointmentsByKeyword(int doctorId, String keyword, String status) {
         DBContext db = DBContext.getInstance();
         List<AppointmentDTO> appointments = new ArrayList<>();
