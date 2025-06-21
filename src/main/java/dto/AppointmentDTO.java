@@ -13,6 +13,9 @@ public class AppointmentDTO {
     private String gender;
     private String phone;
 
+    private String doctor_full_name;
+    private String doctor_department;
+
     // Constructors
     public AppointmentDTO() {
     }
@@ -29,6 +32,22 @@ public class AppointmentDTO {
         this.dob = patientDob;
         this.gender = patientGender;
         this.phone = patientPhone;
+    }
+
+    public String getDoctor_full_name() {
+        return doctor_full_name;
+    }
+
+    public void setDoctor_full_name(String doctor_full_name) {
+        this.doctor_full_name = doctor_full_name;
+    }
+
+    public String getDoctor_department() {
+        return doctor_department;
+    }
+
+    public void setDoctor_department(String doctor_department) {
+        this.doctor_department = doctor_department;
     }
 
     public int getAppointment_id() {
