@@ -15,6 +15,7 @@ import model.Doctor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/api/doctor/appointment")
@@ -107,11 +108,14 @@ public class DoctorAppointmentServlet extends HttpServlet {
 
         // Đọc action từ JSON body
         String requestBody = request.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
-        String action = gson.fromJson(requestBody, RequestAction.class).action;
+        RequestAction requestData = gson.fromJson(requestBody, RequestAction.class);
+        String action = requestData.action;
+        String keyword = requestData.keyword != null ? requestData.keyword.trim() : "";
+
 
 //        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String currentTime = "2024-01-15 08:00:00.000";
-        List<Appointment> appointments;
+        List<AppointmentDTO> appointments;
 
         // Gọi DAO tương ứng theo action
         switch (action) {
@@ -119,6 +123,25 @@ public class DoctorAppointmentServlet extends HttpServlet {
             case "Completed" -> appointments = appointmentDAO.getAppointmentByDoctorIDWithStatus(doctor.getDoctor_id(), "Completed");
             case "Cancelled" -> appointments = appointmentDAO.getAppointmentByDoctorIDWithStatus(doctor.getDoctor_id(), "Cancelled");
             case "Count" -> appointments = appointmentDAO.getAppointmentsTodayByDoctorID(doctor.getDoctor_id(), currentTime);
+            case "Search" -> {
+                if (keyword.isEmpty() || requestData.status == null) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Missing keyword or status\"}");
+                    return;
+                }
+                appointments = appointmentDAO.searchAppointmentsByKeyword(
+                        doctor.getDoctor_id(),
+                        keyword,
+                        requestData.status
+                );
+
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.print(gson.toJson(appointments != null ? appointments : new ArrayList<>()));
+                out.flush();
+                return;
+            }
             default -> {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().write("{\"error\":\"Invalid action\"}");
@@ -138,6 +161,8 @@ public class DoctorAppointmentServlet extends HttpServlet {
 
     private static class RequestAction {
         String action;
+        String keyword;
+        String status;
     }
 }
 

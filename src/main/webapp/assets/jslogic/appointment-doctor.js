@@ -75,7 +75,7 @@ function paginateAppointments() {
         const row = `
         <tr>
             <td>${start + index + 1}</td>
-            <td>${a.patient_id}</td>
+            <td>${a.full_name}</td>
             <td>${a.appointment_datetime}</td>
             <td>${a.shift}</td>
             <td>${a.status}</td>
@@ -137,6 +137,7 @@ async function handleView(id) {
 
         const data = await res.json();
 
+        document.getElementById("patient_id").value = data.patient_id;
         document.getElementById("full_name").value = data.full_name;
         document.getElementById("dob").value = data.dob;
         document.getElementById("gender").value = data.gender;
@@ -191,7 +192,6 @@ async function handleCancel(id) {
         alert("Failed to cancel appointment.");
     }
 }
-
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -270,3 +270,47 @@ function toggleSchedule() {
     const container = document.getElementById("scheduleContainer");
     container.classList.toggle("d-none");
 }
+
+
+document.getElementById("searchAppointmentBtn").addEventListener("click", async () => {
+    const keyword = document.getElementById("searchKeyword").value.trim();
+    const activeTabBtn = document.querySelector("#appointment-table-tab .nav-link.active");
+    const status = activeTabBtn ? activeTabBtn.getAttribute("data-action") : "";
+
+    // Nếu không nhập từ khoá thì gọi lại lịch hẹn theo tab đang chọn
+    if (keyword === "") {
+        fetchAppointmentsByAction(status || 'Upcoming');
+        return;
+    }
+
+    const mappedStatus = (status === "Upcoming") ? "Confirmed" : status;
+
+    try {
+        const res = await fetch('/api/doctor/appointment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                action: "Search",      // thêm dòng này để xác định action
+                keyword: keyword,
+                status: mappedStatus
+            })
+        });
+
+        if (!res.ok) throw new Error("Server error");
+
+        const result = await res.json();
+
+        // Gọi lại paginateAppointments với dữ liệu mới
+        allAppointments = Array.isArray(result) ? result : [];
+        currentPage = 1;
+        paginateAppointments();
+    } catch (err) {
+        console.error("Search failed:", err);
+        document.getElementById("appointmentTableBody").innerHTML = `<tr><td colspan="7">Search failed</td></tr>`;
+    }
+});
+
+

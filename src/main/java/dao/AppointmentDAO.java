@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentDAO {
-    public  List<Appointment> getAppointmentByDoctorIDUpcomming(int doctor_id, String currentime) {
+    public List<AppointmentDTO> getAppointmentByDoctorIDUpcomming(int doctor_id, String currentime) {
         DBContext db = DBContext.getInstance();
-        List<Appointment> appointments = new ArrayList<>();
+        List<AppointmentDTO> appointments = new ArrayList<>();
 
         try {
             String sql = """    
-                     SELECT *
-                     FROM Appointment
+                     SELECT a.*, p.full_name, p.dob, p.gender, p.phone
+                     FROM Appointment a
+                     JOIN Patient p ON a.patient_id = p.patient_id
                      WHERE doctor_id = ? AND status = 'Confirmed'
                        AND appointment_datetime >= ?
                      ORDER BY appointment_datetime ASC;
@@ -29,17 +30,20 @@ public class AppointmentDAO {
 
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                Appointment appointment = new Appointment(
+                AppointmentDTO appointmentDTO =  null;
+                appointmentDTO = new AppointmentDTO(
                         rs.getInt("appointment_id"),
-                        rs.getInt("doctor_id"),
-                        rs.getInt("patient_id"),
-                        rs.getInt("receptionist_id"),
                         rs.getString("appointment_datetime"),
                         rs.getString("shift"),
                         rs.getString("status"),
-                        rs.getString("note")
+                        rs.getString("note"),
+                        rs.getInt("patient_id"),
+                        rs.getString("full_name"),
+                        rs.getString("dob"),
+                        rs.getString("gender"),
+                        rs.getString("phone")
                 );
-                appointments.add(appointment);
+                appointments.add(appointmentDTO);
             }
         } catch (Exception e) {
             return null;
@@ -52,34 +56,38 @@ public class AppointmentDAO {
         }
     }
 
-    public List<Appointment> getAppointmentByDoctorIDWithStatus(int doctor_id, String status) {
+    public List<AppointmentDTO> getAppointmentByDoctorIDWithStatus(int doctor_id, String status) {
         DBContext db = DBContext.getInstance();
-        List<Appointment> appointments = new ArrayList<>();
+        List<AppointmentDTO> appointments = new ArrayList<>();
 
         try {
             String sql = """
-                SELECT *
-                FROM Appointment
-                WHERE doctor_id = ? AND status = ?
-                ORDER BY appointment_datetime DESC;
-                """;
+                    SELECT a.*, p.full_name, p.dob, p.gender, p.phone
+                    FROM Appointment a
+                    JOIN Patient p ON a.patient_id = p.patient_id
+                    WHERE doctor_id = ? AND status = ?
+                    ORDER BY appointment_datetime DESC;
+                    """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, doctor_id);
             statement.setString(2, status);
 
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                Appointment appointment = new Appointment(
+                AppointmentDTO appointmentDTO =  null;
+                appointmentDTO = new AppointmentDTO(
                         rs.getInt("appointment_id"),
-                        rs.getInt("doctor_id"),
-                        rs.getInt("patient_id"),
-                        rs.getInt("receptionist_id"),
                         rs.getString("appointment_datetime"),
                         rs.getString("shift"),
                         rs.getString("status"),
-                        rs.getString("note")
+                        rs.getString("note"),
+                        rs.getInt("patient_id"),
+                        rs.getString("full_name"),
+                        rs.getString("dob"),
+                        rs.getString("gender"),
+                        rs.getString("phone")
                 );
-                appointments.add(appointment);
+                appointments.add(appointmentDTO);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,18 +97,19 @@ public class AppointmentDAO {
         return appointments.isEmpty() ? null : appointments;
     }
 
-    public List<Appointment> getAppointmentsTodayByDoctorID(int doctor_id, String currentDateOnly) {
+    public List<AppointmentDTO> getAppointmentsTodayByDoctorID(int doctor_id, String currentDateOnly) {
         DBContext db = DBContext.getInstance();
-        List<Appointment> appointments = new ArrayList<>();
+        List<AppointmentDTO> appointments = new ArrayList<>();
 
         try {
             String sql = """
-            SELECT *
-            FROM Appointment
-            WHERE doctor_id = ? 
-              AND CONVERT(date, appointment_datetime) = CONVERT(date, ?)
-            ORDER BY appointment_datetime DESC;
-            """;
+                    SELECT a.*, p.full_name, p.dob, p.gender, p.phone
+                    FROM Appointment a
+                    JOIN Patient p ON a.patient_id = p.patient_id
+                    WHERE doctor_id = ? 
+                      AND CONVERT(date, appointment_datetime) = CONVERT(date, ?)
+                    ORDER BY appointment_datetime DESC;
+                    """;
 
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, doctor_id);
@@ -108,15 +117,17 @@ public class AppointmentDAO {
 
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                Appointment appointment = new Appointment(
+                AppointmentDTO appointment = new AppointmentDTO(
                         rs.getInt("appointment_id"),
-                        rs.getInt("doctor_id"),
-                        rs.getInt("patient_id"),
-                        rs.getInt("receptionist_id"),
                         rs.getString("appointment_datetime"),
                         rs.getString("shift"),
                         rs.getString("status"),
-                        rs.getString("note")
+                        rs.getString("note"),
+                        rs.getInt("patient_id"),
+                        rs.getString("full_name"),
+                        rs.getString("dob"),
+                        rs.getString("gender"),
+                        rs.getString("phone")
                 );
                 appointments.add(appointment);
             }
@@ -134,11 +145,11 @@ public class AppointmentDAO {
 
         try {
             String sql = """
-            SELECT a.*, p.full_name, p.dob, p.gender, p.phone
-            FROM Appointment a
-            JOIN Patient p ON a.patient_id = p.patient_id
-            WHERE a.appointment_id = ?
-        """;
+                        SELECT a.*, p.full_name, p.dob, p.gender, p.phone
+                        FROM Appointment a
+                        JOIN Patient p ON a.patient_id = p.patient_id
+                        WHERE a.appointment_id = ?
+                    """;
 
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, appointmentId);
@@ -183,5 +194,65 @@ public class AppointmentDAO {
         }
     }
 
+    public List<AppointmentDTO> searchAppointmentsByKeyword(int doctorId, String keyword, String status) {
+        DBContext db = DBContext.getInstance();
+        List<AppointmentDTO> appointments = new ArrayList<>();
+
+        try {
+            String sql = """
+            SELECT a.*, p.full_name, p.dob, p.gender, p.phone
+            FROM Appointment a
+            JOIN Patient p ON a.patient_id = p.patient_id
+            WHERE a.doctor_id = ?
+              AND a.status = ?
+              AND (
+                REPLACE(p.full_name, ' ', '') COLLATE Latin1_General_CI_AI LIKE ?
+                OR REPLACE(a.shift, ' ', '') COLLATE Latin1_General_CI_AI LIKE ?
+                OR REPLACE(a.note, ' ', '') COLLATE Latin1_General_CI_AI LIKE ?
+              )
+            ORDER BY a.appointment_datetime DESC;
+        """;
+
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            String likeKeyword = "%" + normalizeKeyword(keyword)  + "%";
+            statement.setInt(1, doctorId);
+            statement.setString(2, status);
+            statement.setString(3, likeKeyword);
+            statement.setString(4, likeKeyword);
+            statement.setString(5, likeKeyword);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                AppointmentDTO appointment = new AppointmentDTO(
+                        rs.getInt("appointment_id"),
+                        rs.getString("appointment_datetime"),
+                        rs.getString("shift"),
+                        rs.getString("status"),
+                        rs.getString("note"),
+                        rs.getInt("patient_id"),
+                        rs.getString("full_name"),
+                        rs.getString("dob"),
+                        rs.getString("gender"),
+                        rs.getString("phone")
+                );
+                appointments.add(appointment);
+            }
+
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return appointments.isEmpty() ? null : appointments;
+    }
+
+    public static String normalizeKeyword(String input) {
+        if (input == null) return "";
+        input = input.trim().replaceAll("\\s+", " "); // loại bỏ khoảng trắng thừa
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll(" ", "");
+    }
 
 }
