@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import model.AccountStaff;
 import model.Doctor;
 import model.ListOfMedicalService;
+import model.ServiceOrder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,14 +66,105 @@ public class DoctorServiceOrderServlet extends HttpServlet {
                 String serviceOrderIdStr = request.getParameter("serviceOrderId");
                 if (serviceOrderIdStr != null) {
                     int serviceOrderId = Integer.parseInt(serviceOrderIdStr);
-                    // TODO: Implement getServiceOrderWithDetails
-                    jsonResponse.put("success", true);
-                    jsonResponse.put("message", "Service order details retrieved");
+                    
+                    // Lấy thông tin service order với chi tiết
+                    Map<String, Object> serviceOrderDetails = serviceOrderDAO.getServiceOrderWithDetails(serviceOrderId);
+                    
+                    if (serviceOrderDetails != null) {
+                        // Lấy danh sách service order items với chi tiết
+                        List<Map<String, Object>> serviceOrderItems = serviceOrderItemDAO.getServiceOrderItemsWithDetails(serviceOrderId);
+                        
+                        // Tính tổng tiền
+                        double totalAmount = 0.0;
+                        for (Map<String, Object> item : serviceOrderItems) {
+                            totalAmount += (Double) item.get("service_price");
+                        }
+                        
+                        // Tạo response object
+                        Map<String, Object> responseData = new HashMap<>();
+                        responseData.put("serviceOrder", serviceOrderDetails);
+                        responseData.put("items", serviceOrderItems);
+                        responseData.put("totalAmount", totalAmount);
+                        
+                        jsonResponse.put("success", true);
+                        jsonResponse.put("data", responseData);
+                        jsonResponse.put("message", "Service order details retrieved successfully");
+                    } else {
+                        jsonResponse.put("success", false);
+                        jsonResponse.put("message", "Service order not found");
+                    }
                 } else {
                     jsonResponse.put("success", false);
                     jsonResponse.put("message", "Missing serviceOrderId parameter");
                 }
                 
+            } else if ("getServiceOrdersByMedicineRecord".equals(action)) {
+                // Lấy danh sách service orders theo medicine record ID
+                String medicineRecordIdStr = request.getParameter("medicineRecordId");
+                if (medicineRecordIdStr != null) {
+                    int medicineRecordId = Integer.parseInt(medicineRecordIdStr);
+                    
+                    List<ServiceOrder> serviceOrders = serviceOrderDAO.getServiceOrdersByMedicineRecordId(medicineRecordId);
+                    List<Map<String, Object>> serviceOrdersWithDetails = new ArrayList<>();
+                    
+                    for (ServiceOrder serviceOrder : serviceOrders) {
+                        Map<String, Object> orderDetails = serviceOrderDAO.getServiceOrderWithDetails(serviceOrder.getService_order_id());
+                        if (orderDetails != null) {
+                            List<Map<String, Object>> items = serviceOrderItemDAO.getServiceOrderItemsWithDetails(serviceOrder.getService_order_id());
+                            
+                            // Tính tổng tiền cho order này
+                            double totalAmount = 0.0;
+                            for (Map<String, Object> item : items) {
+                                totalAmount += (Double) item.get("service_price");
+                            }
+                            
+                            orderDetails.put("items", items);
+                            orderDetails.put("totalAmount", totalAmount);
+                            serviceOrdersWithDetails.add(orderDetails);
+                        }
+                    }
+                    
+                    jsonResponse.put("success", true);
+                    jsonResponse.put("data", serviceOrdersWithDetails);
+                    jsonResponse.put("message", "Service orders retrieved successfully");
+                } else {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Missing medicineRecordId parameter");
+                }
+                
+            } else if ("getServiceOrdersByDoctor".equals(action)) {
+                // Lấy danh sách service orders theo doctor ID
+                AccountStaff accountStaff = (AccountStaff) session.getAttribute("user");
+                Doctor doctor = (Doctor) accountStaffDAO.getOStaffByStaffId(accountStaff.getAccount_staff_id(), "Doctor");
+                
+                if (doctor != null) {
+                    List<ServiceOrder> serviceOrders = serviceOrderDAO.getServiceOrdersByDoctorId(doctor.getDoctor_id());
+                    List<Map<String, Object>> serviceOrdersWithDetails = new ArrayList<>();
+                    
+                    for (ServiceOrder serviceOrder : serviceOrders) {
+                        Map<String, Object> orderDetails = serviceOrderDAO.getServiceOrderWithDetails(serviceOrder.getService_order_id());
+                        if (orderDetails != null) {
+                            List<Map<String, Object>> items = serviceOrderItemDAO.getServiceOrderItemsWithDetails(serviceOrder.getService_order_id());
+                            
+                            // Tính tổng tiền cho order này
+                            double totalAmount = 0.0;
+                            for (Map<String, Object> item : items) {
+                                totalAmount += (Double) item.get("service_price");
+                            }
+                            
+                            orderDetails.put("items", items);
+                            orderDetails.put("totalAmount", totalAmount);
+                            serviceOrdersWithDetails.add(orderDetails);
+                        }
+                    }
+                    
+                    jsonResponse.put("success", true);
+                    jsonResponse.put("data", serviceOrdersWithDetails);
+                    jsonResponse.put("message", "Service orders retrieved successfully");
+                } else {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Failed to get doctor information");
+                }
             } else {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Invalid action");
