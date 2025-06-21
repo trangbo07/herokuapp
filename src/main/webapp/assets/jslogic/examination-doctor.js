@@ -577,4 +577,115 @@ function validateExaminationForm(formData) {
     }
     
     return errors;
+}
+
+// Hàm lấy chi tiết service order (ví dụ sử dụng API mới)
+async function getServiceOrderDetails(serviceOrderId) {
+    try {
+        const response = await fetch(`/api/doctor/service-order?action=getServiceOrder&serviceOrderId=${serviceOrderId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get service order details');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            const data = result.data;
+            console.log('Service Order Details:', data);
+            
+            // Hiển thị thông tin chi tiết
+            const serviceOrder = data.serviceOrder;
+            const items = data.items;
+            const totalAmount = data.totalAmount;
+            
+            console.log(`Service Order #${serviceOrder.service_order_id}`);
+            console.log(`Doctor: ${serviceOrder.doctor_name}`);
+            console.log(`Patient: ${serviceOrder.patient_name}`);
+            console.log(`Date: ${serviceOrder.order_date}`);
+            console.log(`Total Amount: ${totalAmount.toLocaleString()} VND`);
+            
+            console.log('Services:');
+            items.forEach(item => {
+                console.log(`- ${item.service_name}: ${item.service_price.toLocaleString()} VND`);
+            });
+            
+            return data;
+        } else {
+            throw new Error(result.message || 'Failed to get service order details');
+        }
+
+    } catch (error) {
+        console.error("Error getting service order details:", error);
+        showAlert('Failed to get service order details. Please try again.', 'danger');
+        return null;
+    }
+}
+
+// Hàm lấy lịch sử service orders theo medicine record
+async function getServiceOrderHistory(medicineRecordId) {
+    try {
+        const response = await fetch(`/api/doctor/service-order?action=getServiceOrdersByMedicineRecord&medicineRecordId=${medicineRecordId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get service order history');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('Service Order History:', result.data);
+            return result.data;
+        } else {
+            throw new Error(result.message || 'Failed to get service order history');
+        }
+
+    } catch (error) {
+        console.error("Error getting service order history:", error);
+        showAlert('Failed to get service order history. Please try again.', 'danger');
+        return null;
+    }
+}
+
+// Hàm lấy lịch sử service orders của bác sĩ
+async function getDoctorServiceOrderHistory() {
+    try {
+        const response = await fetch('/api/doctor/service-order?action=getServiceOrdersByDoctor', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get doctor service order history');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('Doctor Service Order History:', result.data);
+            return result.data;
+        } else {
+            throw new Error(result.message || 'Failed to get doctor service order history');
+        }
+
+    } catch (error) {
+        console.error("Error getting doctor service order history:", error);
+        showAlert('Failed to get doctor service order history. Please try again.', 'danger');
+        return null;
+    }
 } 
