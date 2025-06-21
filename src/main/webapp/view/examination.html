@@ -257,6 +257,37 @@
                 color: #721c24;
             }
             
+            .service-card {
+                border: 2px solid #e9ecef;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            .service-card:hover {
+                border-color: #667eea;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+            }
+            
+            .service-card .form-check-input:checked + .form-check-label {
+                color: #667eea;
+            }
+            
+            .service-card .form-check-input:checked ~ .card-body {
+                background-color: #f8f9ff;
+            }
+            
+            .service-card .card-title {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+            
+            .service-card .card-text {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+            
             @media (max-width: 768px) {
                 .main-content {
                     padding: 10px;
@@ -438,7 +469,7 @@
                                 </thead>
                                 <tbody id="appointmentTableBody">
                                 <!-- Data will be populated dynamically -->
-                                </tbody>
+                                </tbody>    
                             </table>
                         </div>
                         
@@ -519,47 +550,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label" for="symptomsDescription">Detailed Symptoms Description</label>
-                                    <textarea class="form-control" id="symptomsDescription" name="symptomsDescription" rows="3" placeholder="Describe the patient's symptoms in detail..."></textarea>
-                                </div>
-                            </div>
-
-                            <!-- Vital Signs Section -->
-                            <div class="examination-section">
-                                <h5 class="section-title"><i class="fas fa-heartbeat me-2"></i>Vital Signs</h5>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label" for="bloodPressure">Blood Pressure</label>
-                                            <input type="text" class="form-control" id="bloodPressure" name="bloodPressure" placeholder="120/80">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label" for="heartRate">Heart Rate (bpm)</label>
-                                            <input type="number" class="form-control" id="heartRate" name="heartRate" placeholder="72">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label" for="temperature">Temperature (°C)</label>
-                                            <input type="number" class="form-control" id="temperature" name="temperature" step="0.1" placeholder="36.5">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label" for="weight">Weight (kg)</label>
-                                            <input type="number" class="form-control" id="weight" name="weight" step="0.1" placeholder="70">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Physical Examination Section -->
-                            <div class="examination-section">
-                                <h5 class="section-title"><i class="fas fa-search me-2"></i>Physical Examination</h5>
-                                <div class="form-group">
-                                    <label class="form-label" for="physicalExam">Physical Examination Findings</label>
-                                    <textarea class="form-control" id="physicalExam" name="physicalExam" rows="4" placeholder="Describe physical examination findings..."></textarea>
+                                    <textarea class="form-control" id="symptomsDescription" name="symptomsDescription" rows="4" placeholder="Describe the patient's symptoms in detail..." required></textarea>
                                 </div>
                             </div>
 
@@ -568,11 +559,7 @@
                                 <h5 class="section-title"><i class="fas fa-clipboard-list me-2"></i>Preliminary Diagnosis</h5>
                                 <div class="form-group">
                                     <label class="form-label" for="preliminaryDiagnosis">Preliminary Diagnosis</label>
-                                    <textarea class="form-control" id="preliminaryDiagnosis" name="preliminaryDiagnosis" rows="3" placeholder="Enter preliminary diagnosis..."></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="recommendations">Recommendations</label>
-                                    <textarea class="form-control" id="recommendations" name="recommendations" rows="3" placeholder="Enter recommendations for further tests or treatment..."></textarea>
+                                    <textarea class="form-control" id="preliminaryDiagnosis" name="preliminaryDiagnosis" rows="4" placeholder="Enter preliminary diagnosis based on symptoms and examination..." required></textarea>
                                 </div>
                             </div>
 
@@ -583,6 +570,58 @@
                                 </button>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>Save Examination
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Service Order Section -->
+                <div class="card" id="serviceOrderCard" style="display: none;">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-flask me-2"></i>
+                            Paraclinical Services Order
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Examination completed successfully. Please select any additional paraclinical services if needed.
+                        </div>
+
+                        <!-- Service Selection Form -->
+                        <form id="serviceOrderForm">
+                            <input type="hidden" id="medicineRecordId" name="medicineRecordId">
+                            
+                            <div class="examination-section">
+                                <h5 class="section-title"><i class="fas fa-list-check me-2"></i>Available Services</h5>
+                                <div class="form-group">
+                                    <label class="form-label">Select Services</label>
+                                    <div id="servicesContainer" class="row">
+                                        <!-- Services will be loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selected Services Summary -->
+                            <div class="examination-section" id="selectedServicesSection" style="display: none;">
+                                <h5 class="section-title"><i class="fas fa-check-circle me-2"></i>Selected Services</h5>
+                                <div id="selectedServicesList">
+                                    <!-- Selected services will be displayed here -->
+                                </div>
+                                <div class="mt-3">
+                                    <strong>Total Amount: <span id="totalAmount">0</span> VND</strong>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end gap-3 mt-4">
+                                <button type="button" class="btn btn-secondary" id="skipServices">
+                                    <i class="fas fa-times me-2"></i>Skip Services
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="createServiceOrder">
+                                    <i class="fas fa-plus me-2"></i>Create Service Order
                                 </button>
                             </div>
                         </form>

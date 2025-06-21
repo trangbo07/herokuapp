@@ -159,9 +159,56 @@ public class DoctorAppointmentServlet extends HttpServlet {
         out.flush();
     }
 
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("user") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Unauthorized\"}");
+            return;
+        }
+
+        try {
+            // Đọc dữ liệu từ request body
+            String requestBody = request.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
+            StatusUpdateRequest requestData = gson.fromJson(requestBody, StatusUpdateRequest.class);
+            
+            if (requestData.appointmentId == null || requestData.status == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"Missing appointmentId or status\"}");
+                return;
+            }
+
+            boolean success = appointmentDAO.updateAppointmentStatus(requestData.appointmentId, requestData.status);
+
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+
+            if (success) {
+                out.print("{\"success\":true,\"message\":\"Appointment status updated successfully\"}");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.print("{\"error\":\"Failed to update appointment status\"}");
+            }
+            out.flush();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"Internal server error\"}");
+        }
+    }
+
     private static class RequestAction {
         String action;
         String keyword;
+        String status;
+    }
+
+    private static class StatusUpdateRequest {
+        Integer appointmentId;
         String status;
     }
 }

@@ -1,6 +1,8 @@
 let allAppointments = [];
 let selectedAppointment = null;
 let selectedSymptoms = [];
+let allServices = [];
+let selectedServices = [];
 
 // Hàm tải danh sách appointment
 async function loadAppointments() {
@@ -178,9 +180,11 @@ function resetExaminationForm() {
 // Hàm quay lại danh sách bệnh nhân
 function backToPatientSelection() {
     document.getElementById("examinationCard").style.display = "none";
+    document.getElementById("serviceOrderCard").style.display = "none";
     document.getElementById("patientSelectionCard").style.display = "block";
     selectedAppointment = null;
     selectedSymptoms = [];
+    selectedServices = [];
 }
 
 // Hàm xử lý symptom tags
@@ -200,17 +204,9 @@ function handleSymptomTagClick(tag) {
 async function saveExamination(formData) {
     try {
         const examinationData = {
-            appointmentId: formData.get('appointmentId'),
-            symptoms: selectedSymptoms,
+            appointmentId: parseInt(formData.get('appointmentId')),
             symptomsDescription: formData.get('symptomsDescription'),
-            bloodPressure: formData.get('bloodPressure'),
-            heartRate: formData.get('heartRate'),
-            temperature: formData.get('temperature'),
-            weight: formData.get('weight'),
-            physicalExam: formData.get('physicalExam'),
-            preliminaryDiagnosis: formData.get('preliminaryDiagnosis'),
-            recommendations: formData.get('recommendations'),
-            examinationDate: new Date().toISOString()
+            preliminaryDiagnosis: formData.get('preliminaryDiagnosis')
         };
 
         const response = await fetch('/api/doctor/examination', {
@@ -234,11 +230,21 @@ async function saveExamination(formData) {
             // Cập nhật trạng thái appointment thành completed
             await updateAppointmentStatus(examinationData.appointmentId, 'Completed');
             
-            // Quay lại danh sách bệnh nhân
-            setTimeout(() => {
-                backToPatientSelection();
-                loadAppointments(); // Reload danh sách
-            }, 2000);
+            // Lưu medicineRecordId để sử dụng cho service order
+            if (result.medicineRecordId) {
+                document.getElementById("medicineRecordId").value = result.medicineRecordId;
+                
+                // Chuyển sang form service order
+                setTimeout(() => {
+                    showServiceOrderForm();
+                }, 1500);
+            } else {
+                // Quay lại danh sách bệnh nhân nếu không có medicineRecordId
+                setTimeout(() => {
+                    backToPatientSelection();
+                    loadAppointments();
+                }, 2000);
+            }
         } else {
             throw new Error(result.message || 'Failed to save examination');
         }
@@ -249,10 +255,199 @@ async function saveExamination(formData) {
     }
 }
 
+// Hàm hiển thị form service order
+async function showServiceOrderForm() {
+    try {
+        // Ẩn examination form
+        document.getElementById("examinationCard").style.display = "none";
+        
+        // Hiển thị service order form
+        document.getElementById("serviceOrderCard").style.display = "block";
+        
+        // Load danh sách services
+        await loadServices();
+        
+    } catch (error) {
+        console.error("Error showing service order form:", error);
+        showAlert('Failed to load services. Please try again.', 'danger');
+    }
+}
+
+// Hàm load danh sách services
+async function loadServices() {
+    try {
+        const response = await fetch('/api/doctor/service-order?action=getServices', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to load services');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            allServices = result.data;
+            renderServices();
+        } else {
+            throw new Error(result.message || 'Failed to load services');
+        }
+
+    } catch (error) {
+        console.error("Error loading services:", error);
+        showAlert('Failed to load services. Please try again.', 'danger');
+    }
+}
+
+// Hàm render danh sách services
+function renderServices() {
+    const servicesContainer = document.getElementById("servicesContainer");
+    
+    if (!servicesContainer) return;
+
+    servicesContainer.innerHTML = '';
+
+    allServices.forEach(service => {
+        const serviceCard = document.createElement("div");
+        serviceCard.className = "col-md-6 col-lg-4 mb-3";
+        
+        serviceCard.innerHTML = `
+            <div class="card service-card h-100">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" 
+                               value="${service.service_id}" 
+                               id="service_${service.service_id}"
+                               onchange="handleServiceSelection(this)">
+                        <label class="form-check-label" for="service_${service.service_id}">
+                            <h6 class="card-title">${service.name}</h6>
+                            <p class="card-text">${service.description || 'No description'}</p>
+                            <strong class="text-primary">${service.price.toLocaleString()} VND</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        servicesContainer.appendChild(serviceCard);
+    });
+}
+
+// Hàm xử lý việc chọn service
+function handleServiceSelection(checkbox) {
+    const serviceId = parseInt(checkbox.value);
+    const service = allServices.find(s => s.service_id === serviceId);
+    
+    if (checkbox.checked) {
+        selectedServices.push(service);
+    } else {
+        selectedServices = selectedServices.filter(s => s.service_id !== serviceId);
+    }
+    
+    updateSelectedServicesDisplay();
+}
+
+// Hàm cập nhật hiển thị services đã chọn
+function updateSelectedServicesDisplay() {
+    const selectedServicesSection = document.getElementById("selectedServicesSection");
+    const selectedServicesList = document.getElementById("selectedServicesList");
+    const totalAmountSpan = document.getElementById("totalAmount");
+    
+    if (selectedServices.length === 0) {
+        selectedServicesSection.style.display = "none";
+        return;
+    }
+    
+    selectedServicesSection.style.display = "block";
+    
+    let totalAmount = 0;
+    let servicesHtml = '';
+    
+    selectedServices.forEach(service => {
+        totalAmount += service.price;
+        servicesHtml += `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="fas fa-check-circle text-success me-2"></i>${service.name}</span>
+                <span class="text-primary">${service.price.toLocaleString()} VND</span>
+            </div>
+        `;
+    });
+    
+    selectedServicesList.innerHTML = servicesHtml;
+    totalAmountSpan.textContent = totalAmount.toLocaleString();
+}
+
+// Hàm tạo service order
+async function createServiceOrder() {
+    try {
+        const medicineRecordId = document.getElementById("medicineRecordId").value;
+        
+        if (!medicineRecordId) {
+            showAlert('Missing medicine record ID', 'danger');
+            return;
+        }
+        
+        if (selectedServices.length === 0) {
+            showAlert('Please select at least one service', 'danger');
+            return;
+        }
+        
+        const serviceIds = selectedServices.map(service => service.service_id);
+        
+        const response = await fetch('/api/doctor/service-order', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                medicineRecordId: parseInt(medicineRecordId),
+                serviceIds: serviceIds
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create service order');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('Service order created successfully!', 'success');
+            
+            // Quay lại danh sách bệnh nhân
+            setTimeout(() => {
+                backToPatientSelection();
+                loadAppointments();
+            }, 2000);
+        } else {
+            throw new Error(result.message || 'Failed to create service order');
+        }
+
+    } catch (error) {
+        console.error("Error creating service order:", error);
+        showAlert('Failed to create service order. Please try again.', 'danger');
+    }
+}
+
+// Hàm skip services
+function skipServices() {
+    showAlert('Services skipped. Examination completed.', 'info');
+    
+    setTimeout(() => {
+        backToPatientSelection();
+        loadAppointments();
+    }, 1500);
+}
+
 // Hàm cập nhật trạng thái appointment
 async function updateAppointmentStatus(appointmentId, status) {
     try {
-        const response = await fetch('/api/doctor/appointment/status', {
+        const response = await fetch('/api/doctor/appointment', {
             method: 'PUT',
             credentials: 'include',
             headers: {
@@ -333,11 +528,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        if (!formData.get('physicalExam').trim()) {
-            showAlert('Please fill in physical examination findings', 'danger');
-            return;
-        }
-        
         if (!formData.get('preliminaryDiagnosis').trim()) {
             showAlert('Please enter preliminary diagnosis', 'danger');
             return;
@@ -345,6 +535,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Save examination
         saveExamination(formData);
+    });
+    
+    // Event listener cho service order form
+    document.getElementById("serviceOrderForm").addEventListener('submit', function(e) {
+        e.preventDefault();
+        createServiceOrder();
+    });
+    
+    // Event listener cho nút skip services
+    document.getElementById("skipServices").addEventListener('click', function() {
+        skipServices();
     });
     
     // Event listener cho việc refresh appointments
@@ -369,10 +570,6 @@ function validateExaminationForm(formData) {
     
     if (!formData.get('symptomsDescription').trim()) {
         errors.push('Symptoms description is required');
-    }
-    
-    if (!formData.get('physicalExam').trim()) {
-        errors.push('Physical examination findings are required');
     }
     
     if (!formData.get('preliminaryDiagnosis').trim()) {

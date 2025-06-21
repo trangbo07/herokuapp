@@ -8,6 +8,9 @@ import lombok.*;
 @Setter
 @ToString
 public class ExamResult {
-    private int exam_result_id, medicineRecord_id, doctor_id;
-    private String preliminary_diagnosis, symptoms;
+    private int exam_result_id;
+    private int medicineRecord_id;
+    private int doctor_id;
+    private String preliminary_diagnosis;
+    private String symptoms;
 }
