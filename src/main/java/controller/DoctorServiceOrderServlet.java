@@ -165,6 +165,44 @@ public class DoctorServiceOrderServlet extends HttpServlet {
                     jsonResponse.put("success", false);
                     jsonResponse.put("message", "Failed to get doctor information");
                 }
+            } else if ("getServiceOrdersByPatientName".equals(action)) {
+                // Lấy danh sách service orders theo tên bệnh nhân (chỉ của bác sĩ hiện tại)
+                String patientName = request.getParameter("patientName");
+                if (patientName != null && !patientName.trim().isEmpty()) {
+                    // Lấy doctor_id từ session
+                    AccountStaff accountStaff = (AccountStaff) session.getAttribute("user");
+                    Doctor doctor = (Doctor) accountStaffDAO.getOStaffByStaffId(accountStaff.getAccount_staff_id(), "Doctor");
+                    
+                    if (doctor != null) {
+                        List<Map<String, Object>> serviceOrders = serviceOrderDAO.getServiceOrdersByPatientName(patientName.trim(), doctor.getDoctor_id());
+                        List<Map<String, Object>> serviceOrdersWithDetails = new ArrayList<>();
+                        
+                        for (Map<String, Object> serviceOrder : serviceOrders) {
+                            int serviceOrderId = (Integer) serviceOrder.get("service_order_id");
+                            List<Map<String, Object>> items = serviceOrderItemDAO.getServiceOrderItemsWithDetails(serviceOrderId);
+                            
+                            // Tính tổng tiền cho order này
+                            double totalAmount = 0.0;
+                            for (Map<String, Object> item : items) {
+                                totalAmount += (Double) item.get("service_price");
+                            }
+                            
+                            serviceOrder.put("items", items);
+                            serviceOrder.put("totalAmount", totalAmount);
+                            serviceOrdersWithDetails.add(serviceOrder);
+                        }
+                        
+                        jsonResponse.put("success", true);
+                        jsonResponse.put("data", serviceOrdersWithDetails);
+                        jsonResponse.put("message", "Service orders retrieved successfully");
+                    } else {
+                        jsonResponse.put("success", false);
+                        jsonResponse.put("message", "Failed to get doctor information");
+                    }
+                } else {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Missing or empty patientName parameter");
+                }
             } else {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Invalid action");
