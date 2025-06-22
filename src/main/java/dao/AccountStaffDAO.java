@@ -4,6 +4,9 @@ import model.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountStaffDAO {
     public static AccountStaff checkLogin(String username, String password) {
@@ -201,6 +204,33 @@ public class AccountStaffDAO {
         }
 
         return staffObject;
+    }
+
+    public List<Doctor> getAllDoctors() {
+        List<Doctor> doctors = new ArrayList<>();
+        String sql = "SELECT * FROM Doctor ORDER BY full_name";
+        
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Doctor doctor = new Doctor(
+                    rs.getInt("doctor_id"),
+                    rs.getInt("account_staff_id"),
+                    rs.getString("full_name"),
+                    rs.getString("department"),
+                    rs.getString("phone"),
+                    rs.getString("eduLevel")
+                );
+                doctors.add(doctor);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return doctors;
     }
 
 }

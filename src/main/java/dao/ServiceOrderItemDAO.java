@@ -172,4 +172,98 @@ public class ServiceOrderItemDAO {
             return false;
         }
     }
+    
+    public boolean createMultipleServiceOrderItemsWithDoctors(List<ServiceOrderItem> items) {
+        String sql = """
+            INSERT INTO ServiceOrderItem (service_order_id, service_id, doctor_id)
+            VALUES (?, ?, ?)
+        """;
+        
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            for (ServiceOrderItem item : items) {
+                ps.setInt(1, item.getService_order_id());
+                ps.setInt(2, item.getService_id());
+                ps.setInt(3, item.getDoctor_id());
+                ps.addBatch();
+            }
+            
+            int[] results = ps.executeBatch();
+            for (int result : results) {
+                if (result <= 0) {
+                    return false;
+                }
+            }
+            return true;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public List<Map<String, Object>> getAssignedServicesByDoctorId(int doctorId) {
+        List<Map<String, Object>> assignedServices = new ArrayList<>();
+        String sql = """
+            SELECT 
+                soi.service_order_item_id,
+                soi.service_order_id,
+                soi.service_id,
+                soi.doctor_id,
+                lms.name AS service_name,
+                lms.description AS service_description,
+                lms.price AS service_price,
+                d.full_name AS doctor_name,
+                p.full_name AS patient_name,
+                mr.medicineRecord_id,
+                so.order_date,
+                er.symptoms,
+                er.preliminary_diagnosis,
+                rps.result_description,
+                rps.created_at AS result_date
+            FROM ServiceOrderItem soi
+            JOIN ListOfMedicalService lms ON soi.service_id = lms.service_id
+            JOIN Doctor d ON soi.doctor_id = d.doctor_id
+            JOIN ServiceOrder so ON soi.service_order_id = so.service_order_id
+            JOIN MedicineRecords mr ON so.medicineRecord_id = mr.medicineRecord_id
+            JOIN Patient p ON mr.patient_id = p.patient_id
+            LEFT JOIN ExamResult er ON mr.medicineRecord_id = er.medicineRecord_id
+            LEFT JOIN ResultsOfParaclinicalServices rps ON soi.service_order_item_id = rps.service_order_item_id
+            WHERE soi.doctor_id = ?
+            ORDER BY so.order_date DESC
+        """;
+        
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, doctorId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Map<String, Object> service = new HashMap<>();
+                service.put("service_order_item_id", rs.getInt("service_order_item_id"));
+                service.put("service_order_id", rs.getInt("service_order_id"));
+                service.put("service_id", rs.getInt("service_id"));
+                service.put("doctor_id", rs.getInt("doctor_id"));
+                service.put("service_name", rs.getString("service_name"));
+                service.put("service_description", rs.getString("service_description"));
+                service.put("service_price", rs.getDouble("service_price"));
+                service.put("doctor_name", rs.getString("doctor_name"));
+                service.put("patient_name", rs.getString("patient_name"));
+                service.put("medicineRecord_id", rs.getInt("medicineRecord_id"));
+                service.put("order_date", rs.getString("order_date"));
+                service.put("symptoms", rs.getString("symptoms"));
+                service.put("preliminary_diagnosis", rs.getString("preliminary_diagnosis"));
+                service.put("result_description", rs.getString("result_description"));
+                service.put("result_date", rs.getString("result_date"));
+                assignedServices.add(service);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return assignedServices;
+    }
 } 
