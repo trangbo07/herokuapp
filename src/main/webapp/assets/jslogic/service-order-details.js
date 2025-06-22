@@ -3,7 +3,7 @@ let currentServiceOrderData = null;
 let currentHistoryData = null;
 let searchTimeout = null; // For debouncing search
 
-// Hàm bỏ dấu tiếng Việt
+
 function removeVietnameseAccents(str) {
     if (!str) return '';
     
@@ -39,7 +39,7 @@ function removeVietnameseAccents(str) {
     return str.split('').map(char => vietnameseMap[char] || char).join('');
 }
 
-// Hàm kiểm tra xem text có chứa search term không (không phân biệt hoa thường và dấu)
+
 function containsSearchTerm(text, searchTerm) {
     if (!text || !searchTerm) return false;
     
@@ -53,7 +53,7 @@ function containsSearchTerm(text, searchTerm) {
     return searchWords.every(word => normalizedText.includes(word));
 }
 
-// Hàm hiển thị alert
+
 function showAlert(message, type) {
     const alertContainer = document.getElementById("alertContainer");
     
@@ -67,13 +67,13 @@ function showAlert(message, type) {
     
     alertContainer.innerHTML = alertHtml;
     
-    // Tự động ẩn alert sau 5 giây
+    // Tự động ẩn alert sau 1 giây
     setTimeout(() => {
         const alert = alertContainer.querySelector('.alert');
         if (alert) {
             alert.remove();
         }
-    }, 5000);
+    }, 1000);
 }
 
 // Hàm tìm kiếm theo tên bệnh nhân (với debounce)
@@ -424,9 +424,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Tự động load lịch sử của bác sĩ khi trang được load
+
     loadDoctorHistory();
     
-    // Show welcome message
-    showAlert('Welcome to Service Order Details page! Your service order history is displayed below. Start typing a patient name to search automatically (supports Vietnamese accents and partial matching).', 'info');
+    
 }); 
