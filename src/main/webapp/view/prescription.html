@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Details</title>
+    <link rel="stylesheet" href="../assets/assets/css/core/libs.min.css" />
+    <link rel="stylesheet" href="../assets/assets/css/kivicare.min.css?v=1.4.1" />
+    <link rel="stylesheet" href="../assets/assets/css/custom.min.css?v=1.4.1" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Prescription Details</h1>
+        <div id="prescription-info" class="mb-4">
+            <div><strong>Prescription ID:</strong> <span id="prescriptionId"></span></div>
+            <div><strong>Medicine Record ID:</strong> <span id="medicineRecordId"></span></div>
+            <div><strong>Doctor ID:</strong> <span id="doctorId"></span></div>
+            <div><strong>Prescription Date:</strong> <span id="prescriptionDate"></span></div>
+            <div><strong>Status:</strong> <span id="status"></span></div>
+        </div>
+    </div>
+    <script>
+        // Lấy recordId từ URL
+        function getRecordId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('recordId');
+        }
+
+        async function fetchPrescription(recordId) {
+            // Thay đổi endpoint này cho phù hợp với backend của bạn
+            const response = await fetch(`/api/prescription?recordId=${recordId}`);
+            if (!response.ok) {
+                document.getElementById('prescription-info').innerHTML = '<span class="text-danger">Không tìm thấy đơn thuốc!</span>';
+                return;
+            }
+            const data = await response.json();
+            // Hiển thị thông tin đơn thuốc
+            document.getElementById('prescriptionId').textContent = data.prescription_id || '';
+            document.getElementById('medicineRecordId').textContent = data.medicineRecord_id || '';
+            document.getElementById('doctorId').textContent = data.doctor_id || '';
+            document.getElementById('prescriptionDate').textContent = data.prescription_date || '';
+            document.getElementById('status').textContent = data.status || '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const recordId = getRecordId();
+            if (recordId) {
+                fetchPrescription(recordId);
+            } else {
+                document.getElementById('prescription-info').innerHTML = '<span class="text-danger">Thiếu recordId trên URL!</span>';
+            }
+        });
+    </script>
+</body>
+</html> 
