@@ -53,11 +53,13 @@
                 padding: 15px;
                 margin-bottom: 10px;
                 border-left: 4px solid #667eea;
+                transition: all 0.3s ease;
             }
             
             .service-order-item:hover {
                 background: #e3f2fd;
                 transform: translateX(5px);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
             
             .price-badge {
@@ -100,6 +102,15 @@
                 font-weight: 600;
             }
             
+            .btn-info {
+                background: #17a2b8;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 30px;
+                font-weight: 600;
+                color: white;
+            }
+            
             .loading-spinner {
                 display: flex;
                 justify-content: center;
@@ -140,6 +151,12 @@
                 border: 1px solid #f5c6cb;
             }
             
+            .alert-info {
+                background: #d1ecf1;
+                color: #0c5460;
+                border: 1px solid #bee5eb;
+            }
+            
             .history-item {
                 background: #fff;
                 border: 1px solid #e9ecef;
@@ -160,6 +177,44 @@
                 padding: 20px;
                 margin-bottom: 20px;
                 border: 1px solid #e9ecef;
+            }
+            
+            .form-control {
+                border-radius: 8px;
+                border: 1px solid #e9ecef;
+                padding: 12px 15px;
+                transition: all 0.3s ease;
+            }
+            
+            .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+            
+            .form-label {
+                font-weight: 600;
+                color: #495057;
+                margin-bottom: 8px;
+            }
+            
+            .stats-card {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 10px;
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            
+            .stats-number {
+                font-size: 2rem;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            
+            .stats-label {
+                font-size: 0.9rem;
+                opacity: 0.9;
             }
         </style>
     </head>
@@ -244,32 +299,32 @@
                 <!-- Alert Messages -->
                 <div id="alertContainer"></div>
 
-                <!-- Search Section -->
+                <!-- Search Section
                 <div class="search-section">
                     <h4><i class="fas fa-search me-2"></i>Search Service Orders</h4>
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Auto-Search & Flexible Search:</strong> 
+                        <ul class="mb-0 mt-2">
+                            <li><i class="fas fa-magic me-1"></i> Tự động tìm kiếm khi gõ (không cần nhấn Enter)</li>
+                            <li><i class="fas fa-language me-1"></i> Tìm kiếm không dấu (ví dụ: "Nguyen" tìm được "Nguyễn")</li>
+                            <li><i class="fas fa-words me-1"></i> Tìm kiếm từng từ riêng lẻ (ví dụ: "Nguyen Khac" tìm được "Nguyễn Khắc Tráng")</li>
+                            <li><i class="fas fa-font me-1"></i> Không phân biệt hoa thường</li>
+                        </ul>
+                    </div> -->
+
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Service Order ID</label>
-                                <input type="number" class="form-control" id="serviceOrderIdInput" placeholder="Enter Service Order ID">
+                                <label class="form-label">Patient Name</label>
+                                <input type="text" class="form-control" id="patientNameInput" placeholder="Enter patient name to search (Nguyen Khac Trang...)">
+                              
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="form-label">Medicine Record ID</label>
-                                <input type="number" class="form-control" id="medicineRecordIdInput" placeholder="Enter Medicine Record ID">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">&nbsp;</label>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="searchServiceOrder()">
-                                        <i class="fas fa-search me-2"></i>Search Order
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="searchByMedicineRecord()">
-                                        <i class="fas fa-history me-2"></i>Patient History
-                                    </button>
                                     <button class="btn btn-info" onclick="loadDoctorHistory()">
                                         <i class="fas fa-user-md me-2"></i>My History
                                     </button>
@@ -347,49 +402,49 @@
                 </div>
 
                 <!-- Demo Section -->
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title mb-0">
-                            <i class="fas fa-flask me-2"></i>
-                            API Demo - Service Order Features
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <strong>Demo các tính năng mới:</strong> Sử dụng các nút bên dưới để test các API endpoints mới được implement.
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="service-order-item">
-                                    <h6><i class="fas fa-search me-2"></i>Get Service Order Details</h6>
-                                    <p>Lấy chi tiết đơn dịch vụ với thông tin đầy đủ</p>
-                                    <button class="btn btn-primary btn-sm" onclick="demoGetServiceOrderDetails()">
-                                        Test API
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="service-order-item">
-                                    <h6><i class="fas fa-history me-2"></i>Get Patient History</h6>
-                                    <p>Xem lịch sử đơn dịch vụ của bệnh nhân</p>
-                                    <button class="btn btn-primary btn-sm" onclick="demoGetPatientHistory()">
-                                        Test API
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="service-order-item">
-                                    <h6><i class="fas fa-user-md me-2"></i>Get Doctor History</h6>
-                                    <p>Xem lịch sử đơn dịch vụ của bác sĩ</p>
-                                    <button class="btn btn-primary btn-sm" onclick="demoGetDoctorHistory()">
-                                        Test API
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- <div class="card"> -->
+<!--                    <div class="card-header">-->
+<!--                        <h4 class="card-title mb-0">-->
+<!--                            <i class="fas fa-flask me-2"></i>-->
+<!--                            API Demo - Service Order Features-->
+<!--                        </h4>-->
+<!--                    </div>-->
+<!--                    <div class="card-body">-->
+<!--                        <div class="alert alert-info">-->
+<!--                            <i class="fas fa-info-circle me-2"></i>-->
+<!--                            <strong>Demo các tính năng mới:</strong> Sử dụng các nút bên dưới để test các API endpoints mới được implement.-->
+<!--                        </div>-->
+<!--                        -->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-4">-->
+<!--                                <div class="service-order-item">-->
+<!--                                    <h6><i class="fas fa-search me-2"></i>Get Service Order Details</h6>-->
+<!--                                    <p>Lấy chi tiết đơn dịch vụ với thông tin đầy đủ</p>-->
+<!--                                    <button class="btn btn-primary btn-sm" onclick="demoGetServiceOrderDetails()">-->
+<!--                                        Test API-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-4">-->
+<!--                                <div class="service-order-item">-->
+<!--                                    <h6><i class="fas fa-history me-2"></i>Get Patient History</h6>-->
+<!--                                    <p>Xem lịch sử đơn dịch vụ của bệnh nhân</p>-->
+<!--                                    <button class="btn btn-primary btn-sm" onclick="demoGetPatientHistory()">-->
+<!--                                        Test API-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-4">-->
+<!--                                <div class="service-order-item">-->
+<!--                                    <h6><i class="fas fa-user-md me-2"></i>Get Doctor History</h6>-->
+<!--                                    <p>Xem lịch sử đơn dịch vụ của bác sĩ</p>-->
+<!--                                    <button class="btn btn-primary btn-sm" onclick="demoGetDoctorHistory()">-->
+<!--                                        Test API-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </main>

@@ -3,7 +3,9 @@ package dao;
 import model.ServiceOrderItem;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceOrderItemDAO {
     
@@ -57,6 +59,50 @@ public class ServiceOrderItemDAO {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    public List<Map<String, Object>> getServiceOrderItemsWithDetails(int serviceOrderId) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        String sql = """
+            SELECT 
+                soi.service_order_item_id,
+                soi.service_order_id,
+                soi.service_id,
+                soi.doctor_id,
+                lms.name AS service_name,
+                lms.description AS service_description,
+                lms.price AS service_price,
+                d.full_name AS doctor_name
+            FROM ServiceOrderItem soi
+            JOIN ListOfMedicalService lms ON soi.service_id = lms.service_id
+            JOIN Doctor d ON soi.doctor_id = d.doctor_id
+            WHERE soi.service_order_id = ?
+        """;
+        
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, serviceOrderId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("service_order_item_id", rs.getInt("service_order_item_id"));
+                item.put("service_order_id", rs.getInt("service_order_id"));
+                item.put("service_id", rs.getInt("service_id"));
+                item.put("doctor_id", rs.getInt("doctor_id"));
+                item.put("service_name", rs.getString("service_name"));
+                item.put("service_description", rs.getString("service_description"));
+                item.put("service_price", rs.getDouble("service_price"));
+                item.put("doctor_name", rs.getString("doctor_name"));
+                items.add(item);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return items;
     }
     
     public List<ServiceOrderItem> getServiceOrderItemsByServiceOrderId(int serviceOrderId) {
