@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
 <head>
@@ -509,7 +508,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-user" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link active" href="../app/user-profile.html">
+                            <a class="nav-link active" href="profile-patient.html">
                                 <i class="icon">
                                     <svg class="icon-10" width="10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <g>
@@ -1308,7 +1307,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <a class="dropdown-item" href="./profile-patient.html">Profile</a>
+                                    <a class="dropdown-item" href="profile-patient.html">Profile</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="../app/user-privacy-setting.html">Privacy Setting</a>
@@ -2526,5 +2525,46 @@
 <!-- Icons -->
 <script src="../assets/assets/js/solid-icon-search-filter.js?v=1.4.1" defer></script>
 <script src="../assets/jslogic/logout.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/api/patient/profile")
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.accountPatient) {
+                    // Lấy tất cả các .about-info .row .col-7 (theo đúng thứ tự dòng)
+                    const infoRows = document.querySelectorAll('.about-info .row .col-7');
+                    // Thứ tự: Patient ID, Full Name, Date of Birth, Gender, Address, Email, Status
+                    if (infoRows.length >= 7) {
+                        infoRows[0].textContent = data.accountPatient.account_patient_id || "";
+                        infoRows[1].textContent = data.accountPatient.username || "";
+                        infoRows[2].textContent = ""; // Nếu không có ngày sinh trong DB
+                        infoRows[3].textContent = ""; // Nếu không có giới tính trong DB
+                        infoRows[4].textContent = ""; // Nếu không có địa chỉ trong DB
+                        // Email là thẻ <a>
+                        const emailA = infoRows[5].querySelector('a');
+                        if (emailA) {
+                            emailA.textContent = data.accountPatient.email || "";
+                            emailA.href = "mailto:" + (data.accountPatient.email || "");
+                        } else {
+                            infoRows[5].textContent = data.accountPatient.email || "";
+                        }
+                        // Status (nếu muốn hiển thị badge)
+                        infoRows[6].innerHTML = `<span class="badge bg-success">${data.accountPatient.status || ""}</span>`;
+                    }
+                    // Chèn tên bệnh nhân vào avatar
+                    const nameH4 = document.querySelector('.doctor-profile h4 b');
+                    if (nameH4) {
+                        nameH4.textContent = data.accountPatient.username || "";
+                    }
+                } else {
+                    alert("Không lấy được thông tin bệnh nhân!");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Lỗi khi lấy thông tin profile!");
+            });
+    });
+    </script>
 </body>
 </html>
