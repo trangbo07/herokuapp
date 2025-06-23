@@ -244,15 +244,15 @@ async function saveTestResult() {
             return;
         }
         
-        const description = `Test Results: ${testResults}\\nConclusion: ${conclusion}\\nStatus: ${resultStatus}`;
-
         const response = await fetch('/api/doctor/service-result', {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 serviceOrderItemId: parseInt(serviceOrderItemId),
-                resultDescription: description
+                testResults: testResults,
+                conclusion: conclusion,
+                resultStatus: resultStatus
             })
         });
 
