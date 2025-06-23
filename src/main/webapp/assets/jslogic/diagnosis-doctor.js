@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const loadingSpinner = document.getElementById("loadingSpinner");
     const tableContainer = document.getElementById("tableContainer");
     const errorMessage = document.getElementById("errorMessage");
-    
+
     try {
         const response = await fetch("/api/doctor/diagnosis", {
             method: "GET",
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         const data = await response.json();
-        
+
         // Hide loading spinner
         loadingSpinner.style.display = "none";
-        
+
         if (!data || data.length === 0) {
             errorMessage.classList.remove("d-none");
             errorMessage.innerHTML = '<i class="fas fa-info-circle me-2"></i>No diagnosis records found.';
@@ -29,16 +29,16 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         // Show table container
         tableContainer.style.display = "block";
-        
+
         // Update stats
         updateStats(data);
-        
+
         // Render table
         const tableBody = document.getElementById("diagnosisTableBody");
         data.forEach((record, index) => {
             const row = document.createElement("tr");
             row.className = "diagnosis-row";
-            
+
             row.innerHTML = `
                 <td><i class="fas fa-user me-2"></i>${record.fullName || 'N/A'}</td>
                 <td><i class="fas fa-calendar me-2"></i>${record.dob ? new Date(record.dob).toLocaleDateString('en-GB') : 'N/A'}</td>
