@@ -283,7 +283,7 @@ document.getElementById("searchAppointmentBtn").addEventListener("click", async 
         return;
     }
 
-    const mappedStatus = (status === "Upcoming") ? "Confirmed" : status;
+    const mappedStatus = (status === "Upcoming") ? "Pending" : status;
 
     try {
         const res = await fetch('/api/doctor/appointment', {

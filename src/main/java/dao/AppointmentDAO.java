@@ -20,7 +20,7 @@ public class AppointmentDAO {
                      SELECT a.*, p.full_name, p.dob, p.gender, p.phone
                      FROM Appointment a
                      JOIN Patient p ON a.patient_id = p.patient_id
-                     WHERE doctor_id = ? AND status = 'Confirmed'
+                     WHERE doctor_id = ? AND status = 'Pending'
                        AND appointment_datetime >= ?
                      ORDER BY appointment_datetime ASC;
                     """;

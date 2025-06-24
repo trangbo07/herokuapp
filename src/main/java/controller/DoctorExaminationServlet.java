@@ -29,17 +29,17 @@ public class DoctorExaminationServlet extends HttpServlet {
     private final AppointmentDAO appointmentDAO = new AppointmentDAO();
     private final AccountStaffDAO accountStaffDAO = new AccountStaffDAO();
     private final ObjectMapper mapper = new ObjectMapper();
-    
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         Map<String, Object> jsonResponse = new HashMap<>();
-        
+
         try {
             // Kiểm tra session và quyền bác sĩ
             HttpSession session = request.getSession(false);
@@ -50,7 +50,7 @@ public class DoctorExaminationServlet extends HttpServlet {
                 mapper.writeValue(response.getWriter(), jsonResponse);
                 return;
             }
-            
+
             AccountStaff accountStaff = (AccountStaff) session.getAttribute("user");
             if (!"Doctor".equals(accountStaff.getRole())) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -59,45 +59,35 @@ public class DoctorExaminationServlet extends HttpServlet {
                 mapper.writeValue(response.getWriter(), jsonResponse);
                 return;
             }
-            
+
             // Đọc dữ liệu từ request
             Map<String, Object> requestData = mapper.readValue(request.getReader(), Map.class);
-            
+
             // Lấy thông tin từ request
-            Integer appointmentId = (Integer) requestData.get("appointmentId");
+            Integer patientId = (Integer) requestData.get("patientId");
+            Integer waitlistId = (Integer) requestData.get("waitlistId");
             String symptoms = (String) requestData.get("symptomsDescription");
             String preliminaryDiagnosis = (String) requestData.get("preliminaryDiagnosis");
-            
+
             // Validation
-            if (appointmentId == null || symptoms == null || preliminaryDiagnosis == null) {
+            if (patientId == null || waitlistId == null || symptoms == null || preliminaryDiagnosis == null) {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Missing required fields");
                 mapper.writeValue(response.getWriter(), jsonResponse);
                 return;
             }
-            
+
             if (symptoms.trim().isEmpty() || preliminaryDiagnosis.trim().isEmpty()) {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Symptoms and preliminary diagnosis cannot be empty");
                 mapper.writeValue(response.getWriter(), jsonResponse);
                 return;
             }
-            
-            // Lấy thông tin appointment để có patient_id
-            AppointmentDTO appointment = appointmentDAO.getAppointmentDetailWithAppointmentById(appointmentId);
-            if (appointment == null) {
-                jsonResponse.put("success", false);
-                jsonResponse.put("message", "Appointment not found");
-                mapper.writeValue(response.getWriter(), jsonResponse);
-                return;
-            }
-            
-            int patientId = appointment.getPatient_id();
-            
+
             // Tạo hoặc lấy medicine record
             MedicineRecords medicineRecord = medicineRecordDAO.getLatestMedicineRecordByPatientId(patientId);
             int medicineRecordId;
-            
+
             if (medicineRecord == null) {
                 // Tạo medicine record mới
                 medicineRecordId = medicineRecordDAO.createMedicineRecord(patientId);
@@ -110,7 +100,7 @@ public class DoctorExaminationServlet extends HttpServlet {
             } else {
                 medicineRecordId = medicineRecord.getMedicineRecord_id();
             }
-            
+
             // Lấy doctor_id từ session
             Doctor doctor = (Doctor) accountStaffDAO.getOStaffByStaffId(accountStaff.getAccount_staff_id(), "Doctor");
             if (doctor == null) {
@@ -119,19 +109,19 @@ public class DoctorExaminationServlet extends HttpServlet {
                 mapper.writeValue(response.getWriter(), jsonResponse);
                 return;
             }
-            
+
             int doctorId = doctor.getDoctor_id();
-            
+
             // Tạo exam result
             ExamResult examResult = new ExamResult();
             examResult.setMedicineRecord_id(medicineRecordId);
             examResult.setSymptoms(symptoms);
             examResult.setPreliminary_diagnosis(preliminaryDiagnosis);
             examResult.setDoctor_id(doctorId);
-            
+
             // Lưu vào database
             boolean success = examResultDAO.createExamResult(examResult);
-            
+
             if (success) {
                 jsonResponse.put("success", true);
                 jsonResponse.put("message", "Examination result saved successfully");
@@ -141,13 +131,13 @@ public class DoctorExaminationServlet extends HttpServlet {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Failed to save examination result");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             jsonResponse.put("success", false);
             jsonResponse.put("message", "Internal server error: " + e.getMessage());
         }
-        
+
         mapper.writeValue(response.getWriter(), jsonResponse);
     }
     
