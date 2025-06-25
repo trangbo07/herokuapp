@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Details</title>
+    <link rel="stylesheet" href="../assets/assets/css/core/libs.min.css" />
+    <link rel="stylesheet" href="../assets/assets/css/kivicare.min.css?v=1.4.1" />
+    <link rel="stylesheet" href="../assets/assets/css/custom.min.css?v=1.4.1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+    .prescription-table {
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+    }
+    .prescription-table thead tr {
+        background: #a393fa;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+        font-size: 1rem;
+    }
+    .prescription-table th, .prescription-table td {
+        vertical-align: middle !important;
+        text-align: center;
+        font-size: 1rem;
+        border: none;
+    }
+    .prescription-table tbody tr:hover {
+        background: #f3f0ff;
+        transition: background 0.2s;
+    }
+    .prescription-table td {
+        border-bottom: 1px solid #e0e0e0;
+        background: #fff;
+    }
+    /* Simple Navbar - đẹp hơn */
+    .simple-navbar {
+        width: 100%;
+        background: linear-gradient(90deg, #fff 60%, #f3e8ff 100%);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(80, 80, 200, 0.10);
+        padding: 22px 40px 22px 40px;
+        margin: 32px auto 36px auto;
+        display: flex;
+        align-items: center;
+        max-width: 1100px;
+        border-bottom: 3px solid #a393fa;
+    }
+    .navbar-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #6c2eb7;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .navbar-title i {
+        color: #a393fa;
+        font-size: 2.2rem;
+    }
+    </style>
+</head>
+<body>
+    <nav class="simple-navbar">
+        <div class="navbar-title">
+            <i class="fa-solid fa-prescription-bottle-medical"></i>
+            Prescription
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="mb-4">Prescription Details</h1>
+        <div id="prescription-info" class="mb-4">
+            <table class="table prescription-table table-hover">
+                <thead>
+                    <tr>
+                        <th>Medicine Name</th>
+                        <th>Prescription Date</th>
+                        <th>Dosage</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody id="prescription-table-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        function getPatientId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('patientId');
+        }
+
+        async function fetchPrescriptions(patientId) {
+            const response = await fetch(`/api/prescription?patientId=${patientId}`);
+            if (!response.ok) {
+                document.getElementById('prescription-info').innerHTML = '<span class="text-danger">Không tìm thấy đơn thuốc!</span>';
+                return;
+            }
+            const data = await response.json();
+            const tableBody = document.getElementById('prescription-table-body');
+            tableBody.innerHTML = '';
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-danger">Không có đơn thuốc nào cho bệnh nhân này!</td></tr>';
+                return;
+            }
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.medicine_name}</td>
+                    <td>${row.prescription_date}</td>
+                    <td>${row.dosage || ''}</td>
+                    <td>${row.note || ''}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const patientId = getPatientId();
+            if (patientId) {
+                fetchPrescriptions(patientId);
+            } else {
+                document.getElementById('prescription-info').innerHTML = '<span class="text-danger">Thiếu patientId trên URL!</span>';
+            }
+        });
+    </script>
+</body>
+</html> 

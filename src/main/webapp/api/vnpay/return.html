@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả thanh toán VNPay</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 80px; }
+    #result { font-size: 1.5rem; margin: 30px 0; }
+  </style>
+</head>
+<body>
+  <h2>Kết quả thanh toán</h2>
+  <div id="result">Đang xử lý...</div>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const invoiceId = sessionStorage.getItem('payingInvoiceId');
+    // Lấy patientId từ sessionStorage hoặc localStorage nếu cần
+    const patientId = sessionStorage.getItem('payingPatientId') || '';
+    // Thêm log kiểm tra giá trị
+    console.log('invoiceId:', invoiceId, 'vnp_ResponseCode:', urlParams.get('vnp_ResponseCode'));
+    if (invoiceId && urlParams.get('vnp_ResponseCode') === '00') { // 00 là thành công
+      fetch('/invoice/update-status', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `invoiceId=${invoiceId}&status=PAID`
+      }).then(() => {
+        sessionStorage.removeItem('payingInvoiceId');
+        window.location.href = `/view/invoice.html?patientId=${patientId}`;
+      });
+    } else {
+      document.getElementById('result').innerText = 'Thanh toán thất bại hoặc bị huỷ!';
+      setTimeout(() => {
+        window.location.href = `/view/invoice.html?patientId=${patientId}`;
+      }, 2000);
+    }
+  </script>
+</body>
+</html> 

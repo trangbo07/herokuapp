@@ -118,5 +118,92 @@ public class AccountPatientDAO {
         return patient;
     }
 
+    public Integer getPatientIdByAccountPatientId(int accountPatientId) {
+        DBContext db = DBContext.getInstance();
+        Integer patientId = null;
+        try {
+            String sql = "SELECT patient_id FROM Patient_AccountPatient WHERE account_patient_id = ?";
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, accountPatientId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                patientId = rs.getInt("patient_id");
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return patientId;
+    }
+
+    public model.Patient getPatientById(int patientId) {
+        DBContext db = DBContext.getInstance();
+        model.Patient patient = null;
+        try {
+            String sql = "SELECT * FROM Patient WHERE patient_id = ?";
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, patientId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                patient = new model.Patient(
+                    rs.getInt("patient_id"),
+                    rs.getString("full_name"),
+                    rs.getString("dob"),
+                    rs.getString("gender"),
+                    rs.getString("phone"),
+                    rs.getString("address")
+                );
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return patient;
+    }
+
+    public class PatientProfile {
+        public AccountPatient accountPatient;
+        public model.Patient patient;
+    }
+
+    public PatientProfile getPatientProfileByAccountPatientId(int accountPatientId) {
+        PatientProfile profile = new PatientProfile();
+        profile.accountPatient = getAccountById(accountPatientId);
+        Integer patientId = getPatientIdByAccountPatientId(accountPatientId);
+        if (patientId != null) {
+            profile.patient = getPatientById(patientId);
+        }
+        return profile;
+    }
+
+    // Thêm hàm getAccountById
+    public AccountPatient getAccountById(int accountPatientId) {
+        DBContext db = DBContext.getInstance();
+        AccountPatient patient = null;
+        try {
+            String sql = "SELECT * FROM AccountPatient WHERE account_patient_id = ?";
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, accountPatientId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                patient = new AccountPatient(
+                        rs.getInt("account_patient_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("img"),
+                        rs.getString("status")
+                );
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return patient;
+    }
+
 }
 

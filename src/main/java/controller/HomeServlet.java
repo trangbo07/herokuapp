@@ -9,7 +9,7 @@ import model.AccountStaff;
 import java.io.IOException;
 
 @WebServlet("/api/home")
-public class HomeServlet extends HttpServlet {
+public class  HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

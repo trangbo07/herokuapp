@@ -52,4 +52,3 @@ public class DiagnosisServlet extends HttpServlet {
         }
     }
 }
-
