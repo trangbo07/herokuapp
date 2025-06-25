@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <h3 class="mt-4 mb-2">${d.fullName}</h3>
                     <h6 class="text-body fw-normal">${d.department}</h6>
                     <div class="d-flex gap-3 justify-content-center mt-5">
-                        <a class="btn btn-primary" href="patient-appointment.html">Book Appointment</a>
                         <a class="btn btn-secondary" href="app/user-profile.html?id=${d.doctorId}">View Profile</a>
                     </div>
                 </div>
