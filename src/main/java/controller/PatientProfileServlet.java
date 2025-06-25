@@ -11,7 +11,7 @@ import model.AccountPatient;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/api/patient/profile")
+
 public class PatientProfileServlet extends HttpServlet {
     private final Gson gson = new Gson();
     private final AccountPatientDAO accountPatientDAO = new AccountPatientDAO();
