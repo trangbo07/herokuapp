@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóa đơn dịch vụ</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+</head>
+<body>
+    <div class="container mt-5">
+      
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Chi tiết dịch vụ</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tên bệnh nhân</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th>Bệnh</th>
+                            <th>Kết luận</th>
+                            <th>Phác đồ điều trị</th>
+                            <th>Số tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="service-details">
+                        <!-- Dữ liệu dịch vụ sẽ được render ở đây -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>Tổng tiền: <span id="total-amount" class="text-danger"></span></h4>
+            <button id="pay-btn" class="btn btn-success" style="display:none;">Thanh toán</button>
+        </div>
+        <a href="patient-encounters.html" class="btn btn-secondary">Quay lại trang cá nhân</a>
+    </div>
+    <script src="../assets/js/jquery.min.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('patientId');
+        function renderInvoices(data) {
+          console.log('Invoice data received:', data);
+          let html = '';
+          data.forEach(inv => {
+            html += `<tr>
+              <td>${inv.patientName}</td>
+              <td>${inv.dob}</td>
+              <td>${inv.gender}</td>
+              <td>${inv.disease}</td>
+              <td>${inv.conclusion}</td>
+              <td>${inv.treatmentPlan}</td>
+              <td>${inv.totalAmount}</td>
+              <td>
+                ${inv.status === 'Pending' 
+                  ? `<button class="btn btn-success pay-btn" data-amount="${inv.totalAmount}" data-invoiceid="${inv.invoiceId}">Thanh toán</button>`
+                  : inv.status}
+              </td>
+            </tr>`;
+          });
+          document.getElementById('service-details').innerHTML = html;
+
+          // Gắn sự kiện click cho nút thanh toán
+          document.querySelectorAll('.pay-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const amount = this.getAttribute('data-amount');
+              const invoiceId = this.getAttribute('data-invoiceid');
+              console.log('Payment clicked - amount:', amount, 'invoiceId:', invoiceId);
+              fetch('/api/vnpay/create-payment', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `amount=${amount}`
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.paymentUrl) {
+                  sessionStorage.setItem('payingInvoiceId', invoiceId);
+                  sessionStorage.setItem('payingPatientId', patientId);
+                  console.log('Saved to sessionStorage - invoiceId:', invoiceId, 'patientId:', patientId);
+                  window.location.href = data.paymentUrl;
+                }
+              });
+            });
+          });
+        }
+        if (patientId) {
+          fetch(`/invoice?patient_id=${patientId}`)
+            .then(res => res.json())
+            .then(renderInvoices);
+        } else {
+          document.getElementById('service-details').innerHTML = '<tr><td colspan="8">Không tìm thấy thông tin bệnh nhân!</td></tr>';
+        }
+    </script>
+</body>
+</html> 

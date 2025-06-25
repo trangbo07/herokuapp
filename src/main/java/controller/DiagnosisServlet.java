@@ -14,7 +14,7 @@ import model.DiagnosisDetails;
 import model.DiagnosisPatient;
 
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @WebServlet("/DiagnosisServlet")
@@ -52,4 +52,3 @@ public class DiagnosisServlet extends HttpServlet {
         }
     }
 }
-
