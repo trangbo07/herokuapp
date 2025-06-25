@@ -1,6 +1,7 @@
 package model;
 
 import lombok.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -8,7 +9,10 @@ import lombok.*;
 @Setter
 @ToString
 public class Payment {
-    private int payment_id, invoice_id;
-    private String payment_type, payment_date, status;
+    private int payment_id;
     private double amount;
+    private String payment_type; // 'Service' hoặc 'Prescription'
+    private int invoice_id;
+    private LocalDateTime payment_date;
+    private String status; // 'Pending', 'Paid', 'Cancelled'
 }

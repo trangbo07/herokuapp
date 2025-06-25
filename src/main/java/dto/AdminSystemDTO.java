@@ -1,6 +1,12 @@
-package dao;
+package dto;
+import lombok.*;
 
-public class AdminBusinessDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+public class AdminSystemDTO {
     private int accountStaffId;
     private String username;
     private String password;
