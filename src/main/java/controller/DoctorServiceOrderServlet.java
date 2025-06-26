@@ -5,6 +5,7 @@ import dao.AccountStaffDAO;
 import dao.ListOfMedicalServiceDAO;
 import dao.ServiceOrderDAO;
 import dao.ServiceOrderItemDAO;
+import dao.WaitlistDAO;
 import dto.ServiceOrderDTO;
 import dto.ServiceOrderItemDTO;
 import jakarta.servlet.ServletException;
@@ -18,6 +19,7 @@ import model.Doctor;
 import model.ListOfMedicalService;
 import model.ServiceOrder;
 import model.ServiceOrderItem;
+import dto.WaitlistDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class DoctorServiceOrderServlet extends HttpServlet {
     private final ServiceOrderItemDAO serviceOrderItemDAO = new ServiceOrderItemDAO();
     private final ListOfMedicalServiceDAO medicalServiceDAO = new ListOfMedicalServiceDAO();
     private final AccountStaffDAO accountStaffDAO = new AccountStaffDAO();
+    private final WaitlistDAO waitlistDAO = new WaitlistDAO();
     private final ObjectMapper mapper = new ObjectMapper();
     
     @Override
@@ -159,6 +162,21 @@ public class DoctorServiceOrderServlet extends HttpServlet {
                 
                 jsonResponse.put("success", true);
                 jsonResponse.put("data", doctors);
+                
+            } else if ("getServiceOrderWaitlist".equals(action)) {
+                // Lấy danh sách waitlist có status = InProgress và visittype = Initial cho bác sĩ hiện tại
+                Doctor doctor = (Doctor) accountStaffDAO.getOStaffByStaffId(accountStaff.getAccount_staff_id(), "Doctor");
+                if (doctor == null) {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Failed to get doctor information");
+                    mapper.writeValue(response.getWriter(), jsonResponse);
+                    return;
+                }
+                
+                List<WaitlistDTO> serviceOrderWaitlist = waitlistDAO.getServiceOrderWaitlist(doctor.getDoctor_id());
+                
+                jsonResponse.put("success", true);
+                jsonResponse.put("data", serviceOrderWaitlist);
                 
             } else {
                 jsonResponse.put("success", false);

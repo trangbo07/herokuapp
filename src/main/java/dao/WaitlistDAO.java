@@ -110,4 +110,53 @@ public class WaitlistDAO {
         }
     }
 
+    public List<WaitlistDTO> getServiceOrderWaitlist(int doctorId) {
+        List<WaitlistDTO> waitlist = new ArrayList<>();
+        DBContext db = DBContext.getInstance();
+
+        try {
+            String sql = """
+                SELECT w.waitlist_id, w.patient_id, w.doctor_id, w.status, w.room_id,
+                       w.registered_at, w.estimated_time, w.visittype,
+                       a.appointment_datetime, a.note, a.shift,
+                       p.full_name, p.dob, p.gender, p.phone
+                FROM Appointment a
+                JOIN Waitlist w ON a.patient_id = w.patient_id
+                JOIN Patient p ON w.patient_id = p.patient_id
+                WHERE a.doctor_id = ? AND w.status = 'InProgress' AND w.visittype = 'Initial'
+                ORDER BY w.estimated_time ASC
+            """;
+
+            PreparedStatement stmt = db.getConnection().prepareStatement(sql);
+            stmt.setInt(1, doctorId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                WaitlistDTO dto = new WaitlistDTO();
+                dto.setWaitlist_id(rs.getInt("waitlist_id"));
+                dto.setPatient_id(rs.getInt("patient_id"));
+                dto.setDoctor_id(rs.getInt("doctor_id"));
+                dto.setStatus(rs.getString("status"));
+                dto.setRoom_id(rs.getInt("room_id"));
+                dto.setRegistered_at(rs.getString("registered_at"));
+                dto.setEstimated_time(rs.getString("estimated_time"));
+                dto.setVisittype(rs.getString("visittype"));
+                dto.setAppointment_datetime(rs.getString("appointment_datetime"));
+                dto.setNote(rs.getString("note"));
+                dto.setShift(rs.getString("shift"));
+                dto.setFull_name(rs.getString("full_name"));
+                dto.setDob(rs.getString("dob"));
+                dto.setGender(rs.getString("gender"));
+                dto.setPhone(rs.getString("phone"));
+
+                waitlist.add(dto);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return waitlist;
+    }
+
 }

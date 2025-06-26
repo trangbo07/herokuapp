@@ -2,6 +2,9 @@
 let currentServiceOrderData = null;
 let currentHistoryData = null;
 let searchTimeout = null; // For debouncing search
+let allServices = [];
+let selectedServices = [];
+let patientInfo = {};
 
 
 function removeVietnameseAccents(str) {
@@ -67,13 +70,13 @@ function showAlert(message, type) {
     
     alertContainer.innerHTML = alertHtml;
     
-    // Tự động ẩn alert sau 1 giây
+    // Tự động ẩn alert sau 5 giây
     setTimeout(() => {
         const alert = alertContainer.querySelector('.alert');
         if (alert) {
             alert.remove();
         }
-    }, 1000);
+    }, 5000);
 }
 
 // Hàm tìm kiếm theo tên bệnh nhân (với debounce)
@@ -428,4 +431,417 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDoctorHistory();
     
     
+});
+
+// Hàm khởi tạo trang
+async function initializeServiceOrderDetailsPage() {
+    try {
+        // Lấy thông tin từ URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const waitlistId = urlParams.get('waitlistId');
+        const patientId = urlParams.get('patientId');
+        
+        if (!waitlistId || !patientId) {
+            showAlert('Missing required parameters', 'danger');
+            return;
+        }
+        
+        // Load thông tin bệnh nhân
+        await loadPatientInfo(waitlistId, patientId);
+        
+        // Load danh sách services
+        await loadServices();
+        
+    } catch (error) {
+        console.error("Error initializing service order details page:", error);
+        showAlert('Failed to initialize page. Please try again.', 'danger');
+    }
+}
+
+// Hàm load thông tin bệnh nhân
+async function loadPatientInfo(waitlistId, patientId) {
+    try {
+        const response = await fetch(`/api/doctor/waitlist?action=detail&id=${waitlistId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Failed to load patient information');
+
+        const waitlist = await response.json();
+        patientInfo = waitlist;
+
+        // Hiển thị thông tin bệnh nhân
+        document.getElementById("patientId").textContent = waitlist.patient_id ?? 'N/A';
+        document.getElementById("patientName").textContent = waitlist.full_name ?? 'N/A';
+        document.getElementById("patientAge").textContent = waitlist.dob ? calculateAge(waitlist.dob) : 'N/A';
+        document.getElementById("patientGender").textContent = waitlist.gender ?? 'N/A';
+        document.getElementById("patientPhone").textContent = waitlist.phone ?? 'N/A';
+        
+        // Hiển thị Medicine Record ID (cần lấy từ examination record)
+        await loadMedicineRecordId(waitlistId);
+        
+    } catch (error) {
+        console.error("Error loading patient info:", error);
+        showAlert('Failed to load patient information', 'danger');
+    }
+}
+
+// Hàm load Medicine Record ID
+async function loadMedicineRecordId(waitlistId) {
+    try {
+        // Gọi API để lấy medicine record ID từ waitlist
+        const response = await fetch(`/api/doctor/examination?action=getMedicineRecord&waitlistId=${waitlistId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.medicineRecordId) {
+                document.getElementById("medicineRecordId").textContent = result.medicineRecordId;
+            } else {
+                document.getElementById("medicineRecordId").textContent = 'Not found';
+            }
+        } else {
+            document.getElementById("medicineRecordId").textContent = 'Error loading';
+        }
+    } catch (error) {
+        console.error("Error loading medicine record ID:", error);
+        document.getElementById("medicineRecordId").textContent = 'Error';
+    }
+}
+
+// Hàm tính tuổi
+function calculateAge(dob) {
+    if (!dob) return null;
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    
+    return age;
+}
+
+// Hàm load danh sách services
+async function loadServices() {
+    const loadingSpinner = document.getElementById("loadingSpinner");
+    const servicesContainer = document.getElementById("servicesContainer");
+    
+    try {
+        loadingSpinner.style.display = "flex";
+        servicesContainer.style.display = "none";
+
+        const response = await fetch('/api/doctor/service-order?action=getServices', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to load services');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            allServices = result.data;
+            renderServices();
+            loadingSpinner.style.display = "none";
+            servicesContainer.style.display = "block";
+        } else {
+            throw new Error(result.message || 'Failed to load services');
+        }
+
+    } catch (error) {
+        console.error("Error loading services:", error);
+        loadingSpinner.style.display = "none";
+        showAlert('Failed to load services. Please try again.', 'danger');
+    }
+}
+
+// Hàm render danh sách services
+function renderServices() {
+    const servicesContainer = document.getElementById("servicesContainer");
+    
+    if (!servicesContainer) {
+        console.error('Services container not found');
+        return;
+    }
+
+    servicesContainer.innerHTML = '';
+
+    if (!allServices || allServices.length === 0) {
+        servicesContainer.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No services available at the moment. Please check the database or contact administrator.
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    allServices.forEach(service => {
+        const serviceCard = document.createElement("div");
+        serviceCard.className = "col-md-6 col-lg-4 mb-3";
+        
+        const serviceName = service.name || 'Unknown Service';
+        const serviceDescription = service.description || 'No description available';
+        const servicePrice = service.price || 0;
+        const serviceId = service.service_id || 0;
+        
+        serviceCard.innerHTML = `
+            <div class="card service-card h-100">
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" 
+                               value="${serviceId}" 
+                               id="service_${serviceId}"
+                               onchange="handleServiceSelection(this)">
+                        <label class="form-check-label" for="service_${serviceId}">
+                            <h6 class="card-title">${serviceName}</h6>
+                        </label>
+                    </div>
+                    <p class="card-text small text-muted">${serviceDescription}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="service-price">${servicePrice.toLocaleString()} VND</span>
+                    </div>
+                    <div class="doctor-selection mt-3" id="doctor_selection_${serviceId}" style="display: none;">
+                        <label class="form-label small">Assign Doctor:</label>
+                        <select class="form-select form-select-sm" id="doctor_${serviceId}" onchange="handleDoctorSelection(${serviceId})">
+                            <option value="">Select a doctor...</option>
+                            <!-- Doctors will be loaded dynamically -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        servicesContainer.appendChild(serviceCard);
+    });
+    
+    // Load danh sách bác sĩ sau khi render services
+    loadDoctors();
+}
+
+// Hàm xử lý việc chọn service
+function handleServiceSelection(checkbox) {
+    const serviceId = parseInt(checkbox.value);
+    const service = allServices.find(s => s.service_id === serviceId);
+    const doctorSelection = document.getElementById(`doctor_selection_${serviceId}`);
+    
+    if (checkbox.checked) {
+        selectedServices.push(service);
+        if(doctorSelection) doctorSelection.style.display = "block";
+    } else {
+        selectedServices = selectedServices.filter(s => s.service_id !== serviceId);
+        if(doctorSelection) {
+            doctorSelection.style.display = "none";
+            // Reset doctor selection
+            const doctorSelect = document.getElementById(`doctor_${serviceId}`);
+            if(doctorSelect) doctorSelect.value = "";
+            // Remove assigned doctor from service object
+            const serviceInArray = selectedServices.find(s => s.service_id === serviceId);
+            if(serviceInArray) delete serviceInArray.assigned_doctor_id;
+        }
+    }
+    
+    updateSelectedServicesDisplay();
+}
+
+// Hàm xử lý việc chọn bác sĩ
+function handleDoctorSelection(serviceId) {
+    const doctorSelect = document.getElementById(`doctor_${serviceId}`);
+    const selectedDoctorId = doctorSelect.value;
+    
+    // Cập nhật service với doctor_id
+    const serviceIndex = selectedServices.findIndex(s => s.service_id === serviceId);
+    if (serviceIndex !== -1) {
+        selectedServices[serviceIndex].assigned_doctor_id = selectedDoctorId ? parseInt(selectedDoctorId) : null;
+    }
+    
+    updateSelectedServicesDisplay();
+}
+
+// Hàm cập nhật hiển thị services đã chọn
+function updateSelectedServicesDisplay() {
+    const selectedServicesSection = document.getElementById("selectedServicesSection");
+    const selectedServicesList = document.getElementById("selectedServicesList");
+    const totalAmountSpan = document.getElementById("totalAmount");
+    
+    if (selectedServices.length === 0) {
+        selectedServicesSection.style.display = "none";
+        return;
+    }
+    
+    selectedServicesSection.style.display = "block";
+    
+    let totalAmount = 0;
+    let servicesHtml = '';
+    
+    selectedServices.forEach(service => {
+        totalAmount += service.price;
+        
+        // Lấy tên bác sĩ được chọn
+        let doctorName = '<span class="text-danger">Not assigned</span>';
+        if (service.assigned_doctor_id) {
+            const doctorSelect = document.getElementById(`doctor_${service.service_id}`);
+            if(doctorSelect) {
+                const selectedOption = doctorSelect.options[doctorSelect.selectedIndex];
+                if(selectedOption && selectedOption.value) {
+                     doctorName = selectedOption.textContent;
+                }
+            }
+        }
+        
+        servicesHtml += `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span><i class="fas fa-check-circle text-success me-2"></i>${service.name}</span>
+                    <br>
+                    <small class="text-muted">Assigned to: ${doctorName}</small>
+                </div>
+                <span class="text-primary fw-bold">${service.price.toLocaleString()} VND</span>
+            </div>
+        `;
+    });
+    
+    selectedServicesList.innerHTML = servicesHtml;
+    totalAmountSpan.textContent = totalAmount.toLocaleString();
+}
+
+// Hàm load danh sách bác sĩ
+async function loadDoctors() {
+    try {
+        const response = await fetch('/api/doctor/service-order?action=getDoctors', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to load doctors');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            const doctors = result.data;
+            const doctorSelects = document.querySelectorAll('.doctor-selection select');
+            
+            doctorSelects.forEach(select => {
+                // Clear existing options except the first one
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                // Add new options
+                doctors.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.doctor_id;
+                    option.textContent = `${doctor.full_name} - ${doctor.department || 'General'}`;
+                    select.appendChild(option);
+                });
+            });
+        } else {
+            throw new Error(result.message || 'Failed to load doctors');
+        }
+
+    } catch (error) {
+        console.error("Error loading doctors:", error);
+        showAlert('Failed to load doctors. Please try again.', 'danger');
+    }
+}
+
+// Hàm tạo service order
+async function createServiceOrder() {
+    try {
+        const medicineRecordId = document.getElementById("medicineRecordId").textContent;
+        
+        if (medicineRecordId === 'Loading...' || medicineRecordId === 'Not found' || medicineRecordId === 'Error' || medicineRecordId === 'Error loading') {
+            showAlert('Missing medicine record ID', 'danger');
+            return;
+        }
+        
+        if (selectedServices.length === 0) {
+            showAlert('No services selected. Click "Skip Services" to complete the examination.', 'info');
+            return;
+        }
+        
+        // Validation: Check if all selected services have a doctor assigned
+        const unassignedServices = selectedServices.filter(s => !s.assigned_doctor_id);
+        if (unassignedServices.length > 0) {
+            showAlert(`Please assign a doctor for all selected services. Missing for: ${unassignedServices.map(s => s.name).join(', ')}`, 'danger');
+            return;
+        }
+        
+        const servicesData = selectedServices.map(service => ({
+            serviceId: service.service_id,
+            doctorId: service.assigned_doctor_id
+        }));
+        
+        const response = await fetch('/api/doctor/service-order', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                medicineRecordId: parseInt(medicineRecordId),
+                services: servicesData
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: 'Failed to create service order' }));
+            throw new Error(errorData.message);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('Service order created successfully!', 'success');
+            
+            // Quay lại trang service order
+            setTimeout(() => {
+                window.location.href = 'service-order.html';
+            }, 2000);
+        } else {
+            throw new Error(result.message || 'Failed to create service order');
+        }
+
+    } catch (error) {
+        console.error("Error creating service order:", error);
+        showAlert(error.message || 'Failed to create service order. Please try again.', 'danger');
+    }
+}
+
+// Hàm skip services
+function skipServices() {
+    showAlert('Services skipped. Examination completed.', 'info');
+    
+    setTimeout(() => {
+        window.location.href = 'service-order.html';
+    }, 1500);
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Khởi tạo trang khi load
+    initializeServiceOrderDetailsPage();
 }); 
