@@ -147,4 +147,3 @@ public class DoctorWaitlistServlet extends HttpServlet {
     }
 
 }
-

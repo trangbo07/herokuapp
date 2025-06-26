@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Service Order Management</title>
+        <link rel="shortcut icon" href="../assets/assets/images/favicon.ico" />
+        <link rel="stylesheet" href="../assets/assets/css/core/libs.min.css" />
+        <link rel="stylesheet" href="../assets/assets/vendor/flaticon/css/flaticon.css" />
+        <link rel="stylesheet" href="../assets/assets/css/kivicare.min.css?v=1.4.1" />
+        <link rel="stylesheet" href="../assets/assets/css/custom.min.css?v=1.4.1" />
+        <link rel="stylesheet" href="../assets/assets/css/rtl.min.css?v=1.4.1"/>
+        <link rel="stylesheet" href="../assets/assets/css/customizer.min.css?v=1.4.1"/>
+        <style>
+            .main-content {
+                background: #f8f9fa;
+                min-height: 100vh;
+                padding: 20px;
+            }
+            
+            .card {
+                border: none;
+                border-radius: 15px;
+                box-shadow: 0 0 25px rgba(0,0,0,0.08);
+                background: #fff;
+                transition: all 0.3s ease;
+                margin-bottom: 25px;
+            }
+            
+            .card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            }
+            
+            .card-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 15px 15px 0 0 !important;
+                padding: 25px;
+                border: none;
+            }
+            
+            .card-title {
+                font-weight: 600;
+                font-size: 1.4rem;
+                margin: 0;
+                color: white;
+            }
+            
+            .table {
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            }
+            
+            .table thead th {
+                background: #f8f9fa;
+                color: #495057;
+                border: none;
+                padding: 15px;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.85rem;
+                letter-spacing: 0.5px;
+            }
+            
+            .table tbody tr {
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            .table tbody tr:hover {
+                background: #f8f9fa;
+                transform: scale(1.01);
+            }
+            
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                border-radius: 8px;
+                padding: 12px 30px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+            
+            .btn-success {
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                border: none;
+                border-radius: 8px;
+                padding: 8px 20px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+            }
+            
+            .btn-success:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            }
+            
+            .loading-spinner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 200px;
+            }
+            
+            .spinner {
+                width: 50px;
+                height: 50px;
+                border: 5px solid #e9ecef;
+                border-top: 5px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .alert {
+                border-radius: 10px;
+                border: none;
+                padding: 15px 20px;
+                margin-bottom: 20px;
+            }
+            
+            .alert-success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+            
+            .alert-danger {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+            
+            .alert-info {
+                background: #d1ecf1;
+                color: #0c5460;
+                border: 1px solid #bee5eb;
+            }
+            
+            .breadcrumb {
+                background: transparent;
+                padding: 0;
+                margin-bottom: 20px;
+            }
+            
+            .breadcrumb-item a {
+                color: #667eea;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            
+            .breadcrumb-item.active {
+                color: #6c757d;
+            }
+            
+            .status-badge {
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-weight: 600;
+                font-size: 0.8rem;
+            }
+            
+            .status-inprogress {
+                background: #17a2b8;
+                color: white;
+            }
+            
+            .status-waiting {
+                background: #ffc107;
+                color: #212529;
+            }
+            
+            .status-completed {
+                background: #28a745;
+                color: white;
+            }
+            
+            .patient-info {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-left: 3px solid #667eea;
+            }
+            
+            .patient-name {
+                font-weight: 600;
+                color: #495057;
+                margin-bottom: 5px;
+            }
+            
+            .patient-details {
+                font-size: 0.9rem;
+                color: #6c757d;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main-content">
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="examination.html"><i class="fas fa-arrow-left me-2"></i>Back to Examination</a></li>
+                        <li class="breadcrumb-item active">Service Order Management</li>
+                    </ol>
+                </nav>
+
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Service Order List Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-stethoscope me-2"></i>
+                            Service Order Management
+                        </h5>
+                        <p class="mb-0 mt-2" style="opacity: 0.9;">
+                            Patients ready for service orders (Status: InProgress, Visit Type: Initial)
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="loading-spinner">
+                            <div class="spinner"></div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span id="errorText">Failed to load service orders.</span>
+                        </div>
+
+                        <!-- Table Container -->
+                        <div id="tableContainer" style="display: none;">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th><i class="fas fa-user me-2"></i>Patient</th>
+                                            <th><i class="fas fa-door-open me-2"></i>Room</th>
+                                            <th><i class="fas fa-calendar-plus me-2"></i>Registered</th>
+                                            <th><i class="fas fa-hourglass-start me-2"></i>Estimated Time</th>
+                                            <th><i class="fas fa-calendar-check me-2"></i>Appointment</th>
+                                            <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                            <th><i class="fas fa-vial me-2"></i>Visit Type</th>
+                                            <th><i class="fas fa-sticky-note me-2"></i>Note</th>
+                                            <th><i class="fas fa-clock me-2"></i>Shift</th>
+                                            <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceOrderTableBody">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="../assets/assets/js/core/libs.min.js"></script>
+        <script src="../assets/assets/js/core/external.min.js"></script>
+        <script src="../assets/assets/js/kivicare.js"></script>
+        <script src="../assets/jslogic/service-order.js"></script>
+    </body>
+</html> 
