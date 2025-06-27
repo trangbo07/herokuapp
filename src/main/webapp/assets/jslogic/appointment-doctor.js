@@ -180,11 +180,10 @@ async function handleCancel(id) {
 
         alert("Appointment cancelled successfully.");
 
-        // Ẩn offcanvas nếu đang mở
         const canvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasAppointmentEdit'));
         if (canvas) canvas.hide();
 
-        // Tải lại danh sách
+
         await fetchAppointmentsByAction('Upcoming');
 
     } catch (err) {
