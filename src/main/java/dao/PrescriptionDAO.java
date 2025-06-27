@@ -29,7 +29,8 @@ public class PrescriptionDAO {
 
     public List<Map<String, Object>> getPrescriptionsByPatientIdWithDoctorName(int patientId) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT p.*, d.full_name as doctor_name FROM Prescription p JOIN MedicineRecords m ON p.medicineRecord_id = m.medicineRecord_id JOIN Doctor d ON p.doctor_id = d.doctor_id WHERE m.patient_id = ?";
+        String sql = "SELECT p.*, d.full_name as doctor_name FROM Prescription p JOIN MedicineRecords m ON p.medicineRecord_id = m.medicineRecord_id JOIN Doctor " +
+                "d ON p.doctor_id = d.doctor_id WHERE m.patient_id = ?";
         try (Connection conn = DBContext.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, patientId);

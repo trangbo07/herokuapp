@@ -33,11 +33,11 @@ public class ProfilePatientServlet extends HttpServlet {
             return;
         }
 
-        // Lấy user từ session
+
         AccountPatient user = (AccountPatient) session.getAttribute("user");
         int accountPatientId = user.getAccount_patient_id();
         System.out.println("[DEBUG] account_patient_id = " + accountPatientId);
-        // Gọi DAO bằng account_patient_id
+
         PatientDTO patientDetails = patientDAO.getPatientDetailByAccountId(accountPatientId);
 
         if (patientDetails == null) {
@@ -46,7 +46,7 @@ public class ProfilePatientServlet extends HttpServlet {
             return;
         }
 
-        // Trả về JSON
+
         PrintWriter out = response.getWriter();
         out.print(gson.toJson(patientDetails));
         out.flush();
