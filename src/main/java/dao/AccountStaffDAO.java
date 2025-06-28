@@ -15,7 +15,7 @@ public class AccountStaffDAO {
 
         try {
             String sql = """    
-                    SELECT * FROM AccountStaff WHERE (username = ? OR email = ?) AND password = ?
+                    SELECT * FROM AccountStaff WHERE (username = ? OR email = ?) AND password = ? AND status = 'Enable'
                     """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, username);
