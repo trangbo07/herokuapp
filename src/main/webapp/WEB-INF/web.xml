@@ -11,4 +11,34 @@
         <servlet-class>controller.VnPayServlet</servlet-class>
     </servlet>
     
+    <!-- Login Servlet -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>controller.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/api/login</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Register Servlet -->
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>controller.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/api/register</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Logout Servlet -->
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>controller.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/api/logout</url-pattern>
+    </servlet-mapping>
+    
 </web-app>
