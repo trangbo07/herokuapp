@@ -1,32 +1,42 @@
-FROM openjdk:17-jdk-slim
+# Use Eclipse Temurin JDK 17 (more stable than openjdk)
+FROM eclipse-temurin:17-jdk-alpine
 
-# Set environment variables
-ENV CATALINA_HOME /usr/local/tomcat
-ENV PATH $CATALINA_HOME/bin:$PATH
+# Set working directory
+WORKDIR /app
 
-# Install dependencies
-RUN apt-get update && \
-    apt-get install -y wget && \
-    rm -rf /var/lib/apt/lists/*
+# Copy pom.xml first for better layer caching
+COPY pom.xml .
 
-# Download and install Tomcat 10
-RUN wget https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.34/bin/apache-tomcat-10.1.34.tar.gz && \
-    tar -xzf apache-tomcat-10.1.34.tar.gz && \
-    mv apache-tomcat-10.1.34 $CATALINA_HOME && \
-    rm apache-tomcat-10.1.34.tar.gz
+# Install Maven
+RUN apk add --no-cache maven
 
-# Copy WAR file to webapps directory
-COPY target/SWP391-1.0-SNAPSHOT.war $CATALINA_HOME/webapps/ROOT.war
+# Download dependencies
+RUN mvn dependency:go-offline -B
 
-# Create tomcat user
-RUN useradd -r -s /bin/false tomcat && \
-    chown -R tomcat:tomcat $CATALINA_HOME
+# Copy source code
+COPY src ./src
 
-# Expose port 8080
-EXPOSE 8080
+# Package application
+RUN mvn clean package -DskipTests
 
-# Switch to tomcat user
-USER tomcat
+# Create runtime stage
+FROM eclipse-temurin:17-jre-alpine
 
-# Start Tomcat
-CMD ["catalina.sh", "run"] 
+WORKDIR /app
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Copy webapp-runner and WAR file
+COPY --from=0 /app/target/dependency/webapp-runner.jar webapp-runner.jar
+COPY --from=0 /app/target/*.war app.war
+
+# Expose port
+EXPOSE $PORT
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:$PORT/ || exit 1
+
+# Start application
+CMD java -jar webapp-runner.jar --port $PORT app.war 
