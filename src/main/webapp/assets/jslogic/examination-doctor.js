@@ -68,9 +68,7 @@
                 <td><i class="fas fa-sticky-note me-2"></i>${waitlist.note || 'No note'}</td>
                 <td><i class="fas fa-clock me-2"></i>${waitlist.shift || 'N/A'}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary select-patient-btn" data-waitlist-id="${waitlist.waitlist_id}">
-                        <i class="fas fa-stethoscope me-1"></i>Select
-                    </button>
+                    ${generateActionButton(waitlist)}
                 </td>
             `;
     
@@ -91,6 +89,49 @@
                 return 'badge bg-success';
             default:
                 return 'badge bg-light text-dark';
+        }
+    }
+
+    // Hàm tạo button action phù hợp theo status
+    function generateActionButton(waitlist) {
+        const status = waitlist.status?.toLowerCase();
+        const waitlistId = waitlist.waitlist_id;
+        
+        switch (status) {
+            case 'waiting':
+                return `
+                    <button class="btn btn-sm btn-primary select-patient-btn" data-waitlist-id="${waitlistId}">
+                        <i class="fas fa-stethoscope me-1"></i>Select
+                    </button>
+                `;
+            
+            case 'inprogress':
+                return `
+                    <button class="btn btn-sm btn-info" disabled>
+                        <i class="fas fa-spinner fa-spin me-1"></i>In Progress
+                    </button>
+                `;
+            
+            case 'completed':
+                return `
+                    <button class="btn btn-sm btn-success" disabled>
+                        <i class="fas fa-check-circle me-1"></i>Completed
+                    </button>
+                `;
+            
+            case 'skipped':
+                return `
+                    <button class="btn btn-sm btn-secondary" disabled>
+                        <i class="fas fa-forward me-1"></i>Skipped
+                    </button>
+                `;
+            
+            default:
+                return `
+                    <button class="btn btn-sm btn-outline-secondary" disabled>
+                        <i class="fas fa-question me-1"></i>Unknown
+                    </button>
+                `;
         }
     }
     

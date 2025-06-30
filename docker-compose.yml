@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # Healthcare Web Application
+  healthcare-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver-db
+    environment:
+      - DB_HOST=sqlserver-db
+      - DB_PORT=1433
+      - DB_NAME=healthcare
+      - DB_USER=sa
+      - DB_PASSWORD=YourPassword123!
+    networks:
+      - healthcare-network
+
+  # SQL Server Database
+  sqlserver-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourPassword123!
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - healthcare-network
+
+  # SQL Server Management (Web UI)
+  sqlserver-web:
+    image: mcr.microsoft.com/mssql-tools:latest
+    depends_on:
+      - sqlserver-db
+    networks:
+      - healthcare-network
+
+volumes:
+  sqlserver-data:
+
+networks:
+  healthcare-network:
+    driver: bridge 

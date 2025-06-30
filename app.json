@@ -1,0 +1,89 @@
+{
+  "name": "Healthcare Management System",
+  "description": "A comprehensive healthcare management system built with Java, Jakarta EE, and PostgreSQL",
+  "keywords": ["java", "healthcare", "jakarta-ee", "postgresql", "vnpay"],
+  "website": "https://github.com/yourusername/healthcare-management-system",
+  "repository": "https://github.com/yourusername/healthcare-management-system",
+  "logo": "https://healthcare-app.herokuapp.com/assets/images/logo.png",
+  "success_url": "/",
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "heroku/java"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini",
+      "as": "DATABASE"
+    },
+    {
+      "plan": "papertrail:choklad",
+      "as": "PAPERTRAIL"
+    }
+  ],
+  "env": {
+    "ENV": {
+      "description": "Environment name (production for Heroku)",
+      "value": "production",
+      "required": true
+    },
+    "JAVA_TOOL_OPTIONS": {
+      "description": "Java runtime options optimized for Heroku",
+      "value": "-Xmx300m -Xss512k -XX:CICompilerCount=2 -Dfile.encoding=UTF-8",
+      "required": true
+    },
+    "VNPAY_TMN_CODE": {
+      "description": "VnPay Terminal Code for payment processing",
+      "value": "DIMMABD6",
+      "required": true
+    },
+    "VNPAY_HASH_SECRET": {
+      "description": "VnPay Hash Secret for payment processing",
+      "value": "2BVC92IQL8S3WICDEHJ4CF15BM5GKDJA",
+      "required": true
+    },
+    "VNPAY_RETURN_URL": {
+      "description": "VnPay return URL (will be set to app URL)",
+      "generator": "secret"
+    },
+    "SMTP_HOST": {
+      "description": "SMTP server host for email sending (optional)",
+      "required": false
+    },
+    "SMTP_PORT": {
+      "description": "SMTP server port (e.g., 587)",
+      "value": "587",
+      "required": false
+    },
+    "SMTP_USERNAME": {
+      "description": "SMTP username for email authentication (optional)",
+      "required": false
+    },
+    "SMTP_PASSWORD": {
+      "description": "SMTP password for email authentication (optional)",
+      "required": false
+    },
+    "TZ": {
+      "description": "Timezone for the application",
+      "value": "Asia/Ho_Chi_Minh",
+      "required": true
+    }
+  },
+  "scripts": {
+    "postdeploy": "echo 'Healthcare Management System deployed successfully!'"
+  },
+  "environments": {
+    "test": {
+      "addons": [
+        "heroku-postgresql:mini"
+      ]
+    }
+  }
+} 

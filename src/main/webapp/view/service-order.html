@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Service Order Management</title>
+        <title>Service Order Management - Medical Dashboard</title>
         <link rel="shortcut icon" href="../assets/assets/images/favicon.ico" />
         <link rel="stylesheet" href="../assets/assets/css/core/libs.min.css" />
         <link rel="stylesheet" href="../assets/assets/vendor/flaticon/css/flaticon.css" />
@@ -11,112 +11,400 @@
         <link rel="stylesheet" href="../assets/assets/css/custom.min.css?v=1.4.1" />
         <link rel="stylesheet" href="../assets/assets/css/rtl.min.css?v=1.4.1"/>
         <link rel="stylesheet" href="../assets/assets/css/customizer.min.css?v=1.4.1"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
         <style>
+            :root {
+                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                --info-gradient: linear-gradient(135deg, #3182ce 0%, #63b3ed 100%);
+                --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                --danger-gradient: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+                --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                --light-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                
+                --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+                --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+                --shadow-lg: 0 8px 30px rgba(0,0,0,0.16);
+                --shadow-xl: 0 12px 40px rgba(0,0,0,0.20);
+                
+                --border-radius: 12px;
+                --border-radius-lg: 16px;
+                --border-radius-xl: 20px;
+                
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            body {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                line-height: 1.6;
+            }
+            
             .main-content {
-                background: #f8f9fa;
                 min-height: 100vh;
-                padding: 20px;
+                padding: 2rem;
             }
             
-            .card {
-                border: none;
-                border-radius: 15px;
-                box-shadow: 0 0 25px rgba(0,0,0,0.08);
-                background: #fff;
-                transition: all 0.3s ease;
-                margin-bottom: 25px;
-            }
-            
-            .card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            }
-            
-            .card-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* Header Section */
+            .page-header {
+                background: var(--primary-gradient);
+                border-radius: var(--border-radius-xl);
+                padding: 2.5rem;
+                margin-bottom: 2rem;
                 color: white;
-                border-radius: 15px 15px 0 0 !important;
-                padding: 25px;
-                border: none;
-            }
-            
-            .card-title {
-                font-weight: 600;
-                font-size: 1.4rem;
-                margin: 0;
-                color: white;
-            }
-            
-            .table {
-                border-radius: 10px;
+                box-shadow: var(--shadow-lg);
+                position: relative;
                 overflow: hidden;
-                box-shadow: 0 2px 15px rgba(0,0,0,0.05);
             }
             
-            .table thead th {
-                background: #f8f9fa;
-                color: #495057;
+            .page-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 200px;
+                height: 200px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 50%;
+                transform: translate(50%, -50%);
+            }
+            
+            .page-header h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin: 0;
+                position: relative;
+                z-index: 1;
+            }
+            
+            .page-header p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                margin: 0.5rem 0 0 0;
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Modern Cards */
+            .modern-card {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--shadow-sm);
                 border: none;
-                padding: 15px;
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 0.85rem;
-                letter-spacing: 0.5px;
+                transition: var(--transition);
+                margin-bottom: 2rem;
+                overflow: hidden;
             }
             
-            .table tbody tr {
-                transition: all 0.3s ease;
+            .modern-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-2px);
+            }
+            
+            .modern-card .card-header {
+                background: white;
+                border-bottom: 1px solid #e9ecef;
+                padding: 1.5rem 2rem;
+                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            }
+            
+            .modern-card .card-body {
+                padding: 2rem;
+            }
+            
+            .card-title-modern {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            
+            .card-title-modern i {
+                color: #667eea;
+                font-size: 1.1rem;
+            }
+            
+            /* Modern Buttons */
+            .btn-modern {
+                border: none;
+                border-radius: var(--border-radius);
+                padding: 0.75rem 1.5rem;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                text-decoration: none;
                 cursor: pointer;
             }
             
-            .table tbody tr:hover {
+            .btn-modern:hover {
+                transform: translateY(-2px);
+                text-decoration: none;
+            }
+            
+            .btn-modern::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                transition: left 0.5s;
+            }
+            
+            .btn-modern:hover::before {
+                left: 100%;
+            }
+            
+            .btn-primary-modern {
+                background: var(--primary-gradient);
+                color: white;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            }
+            
+            .btn-primary-modern:hover {
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+            
+            .btn-success-modern {
+                background: var(--success-gradient);
+                color: white;
+                box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+            }
+            
+            .btn-success-modern:hover {
+                box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+                color: white;
+            }
+            
+            .btn-info-modern {
+                background: var(--info-gradient);
+                color: white;
+                box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+            }
+            
+            .btn-info-modern:hover {
+                box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+                color: white;
+            }
+            
+            .btn-warning-modern {
+                background: var(--warning-gradient);
+                color: white;
+                box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+            }
+            
+            .btn-warning-modern:hover {
+                box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+                color: white;
+            }
+            
+            .btn-outline-modern {
+                background: transparent;
+                border: 2px solid #667eea;
+                color: #667eea;
+                transition: var(--transition);
+            }
+            
+            .btn-outline-modern:hover {
+                background: #667eea;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            }
+            
+            /* Action Grid */
+            .action-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .action-card {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                padding: 2rem;
+                box-shadow: var(--shadow-sm);
+                transition: var(--transition);
+                border: 1px solid #e9ecef;
+                text-align: center;
+            }
+            
+            .action-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-4px);
+                border-color: #667eea;
+            }
+            
+            .action-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+                font-size: 1.5rem;
+                color: white;
+            }
+            
+            .action-icon.primary { background: var(--primary-gradient); }
+            .action-icon.success { background: var(--success-gradient); }
+            .action-icon.info { background: var(--info-gradient); }
+            .action-icon.warning { background: var(--warning-gradient); }
+            
+            .action-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.5rem;
+            }
+            
+            .action-desc {
+                color: #718096;
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Search Section */
+            .search-section {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                padding: 2rem;
+                box-shadow: var(--shadow-sm);
+                margin-bottom: 2rem;
+            }
+            
+            .search-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+            }
+            
+            .search-item {
+                background: #f8f9fa;
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                transition: var(--transition);
+            }
+            
+            .search-item:hover {
+                background: #e9ecef;
+                transform: translateY(-2px);
+            }
+            
+            .search-label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.75rem;
+            }
+            
+            .search-input-group {
+                display: flex;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            .search-input-group input {
+                border: none;
+                padding: 0.75rem 1rem;
+                flex: 1;
+                font-size: 0.9rem;
+            }
+            
+            .search-input-group input:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            
+            .search-btn {
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                padding: 0.75rem 1rem;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+            
+            .search-btn:hover {
+                background: var(--primary-gradient);
+                filter: brightness(1.1);
+            }
+            
+            /* Modern Table */
+            .modern-table {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                overflow: hidden;
+                box-shadow: var(--shadow-sm);
+            }
+            
+            .modern-table table {
+                margin: 0;
+                border: none;
+            }
+            
+            .modern-table thead th {
+                background: #f8f9fa;
+                color: #4a5568;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 0.5px;
+                padding: 1rem;
+                border: none;
+            }
+            
+            .modern-table tbody td {
+                padding: 1rem;
+                border: none;
+                border-bottom: 1px solid #e9ecef;
+                vertical-align: middle;
+            }
+            
+            .modern-table tbody tr {
+                transition: var(--transition);
+            }
+            
+            .modern-table tbody tr:hover {
                 background: #f8f9fa;
                 transform: scale(1.01);
             }
             
-            .btn-primary {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border: none;
-                border-radius: 8px;
-                padding: 12px 30px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-            }
-            
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            
-            .btn-success {
-                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                border: none;
-                border-radius: 8px;
-                padding: 8px 20px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-                font-size: 0.9rem;
-            }
-            
-            .btn-success:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-            }
-            
-            .loading-spinner {
+            /* Loading Animation */
+            .loading-container {
                 display: flex;
-                justify-content: center;
+                flex-direction: column;
                 align-items: center;
-                height: 200px;
+                justify-content: center;
+                padding: 3rem;
+                color: #718096;
             }
             
-            .spinner {
-                width: 50px;
-                height: 50px;
-                border: 5px solid #e9ecef;
-                border-top: 5px solid #667eea;
+            .modern-spinner {
+                width: 48px;
+                height: 48px;
+                border: 4px solid #e9ecef;
+                border-top: 4px solid #667eea;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
+                margin-bottom: 1rem;
             }
             
             @keyframes spin {
@@ -124,149 +412,654 @@
                 100% { transform: rotate(360deg); }
             }
             
-            .alert {
-                border-radius: 10px;
+            /* Action Grid */
+            .action-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .action-card {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                padding: 2rem;
+                box-shadow: var(--shadow-sm);
+                transition: var(--transition);
+                border: 1px solid #e9ecef;
+                text-align: center;
+            }
+            
+            .action-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-4px);
+                border-color: #667eea;
+            }
+            
+            .action-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+                font-size: 1.5rem;
+                color: white;
+            }
+            
+            .action-icon.primary { background: var(--primary-gradient); }
+            .action-icon.success { background: var(--success-gradient); }
+            .action-icon.info { background: var(--info-gradient); }
+            .action-icon.warning { background: var(--warning-gradient); }
+            
+            .action-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.5rem;
+            }
+            
+            .action-desc {
+                color: #718096;
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Search Section */
+            .search-section {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                padding: 2rem;
+                box-shadow: var(--shadow-sm);
+                margin-bottom: 2rem;
+            }
+            
+            .search-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+            }
+            
+            .search-item {
+                background: #f8f9fa;
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                transition: var(--transition);
+            }
+            
+            .search-item:hover {
+                background: #e9ecef;
+                transform: translateY(-2px);
+            }
+            
+            .search-label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.75rem;
+            }
+            
+            .search-input-group {
+                display: flex;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            .search-input-group input {
                 border: none;
-                padding: 15px 20px;
-                margin-bottom: 20px;
+                padding: 0.75rem 1rem;
+                flex: 1;
+                font-size: 0.9rem;
             }
             
-            .alert-success {
-                background: #d4edda;
-                color: #155724;
-                border: 1px solid #c3e6cb;
+            .search-input-group input:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             }
             
-            .alert-danger {
-                background: #f8d7da;
-                color: #721c24;
-                border: 1px solid #f5c6cb;
+            .search-btn {
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                padding: 0.75rem 1rem;
+                cursor: pointer;
+                transition: var(--transition);
             }
             
-            .alert-info {
-                background: #d1ecf1;
-                color: #0c5460;
-                border: 1px solid #bee5eb;
+            .search-btn:hover {
+                background: var(--primary-gradient);
+                filter: brightness(1.1);
             }
             
-            .breadcrumb {
+            /* Modern Table */
+            .modern-table {
+                background: white;
+                border-radius: var(--border-radius-lg);
+                overflow: hidden;
+                box-shadow: var(--shadow-sm);
+            }
+            
+            .modern-table table {
+                margin: 0;
+                border: none;
+            }
+            
+            .modern-table thead th {
+                background: #f8f9fa;
+                color: #4a5568;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 0.5px;
+                padding: 1rem;
+                border: none;
+            }
+            
+            .modern-table tbody td {
+                padding: 1rem;
+                border: none;
+                border-bottom: 1px solid #e9ecef;
+                vertical-align: middle;
+            }
+            
+            .modern-table tbody tr {
+                transition: var(--transition);
+            }
+            
+            .modern-table tbody tr:hover {
+                background: #f8f9fa;
+                transform: scale(1.01);
+            }
+            
+            /* Status Badges */
+            .status-badge {
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-weight: 600;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .status-inprogress {
+                background: linear-gradient(135deg, #3182ce, #63b3ed);
+                color: white;
+            }
+            
+            .status-waiting {
+                background: linear-gradient(135deg, #ed8936, #f6ad55);
+                color: white;
+            }
+            
+            .status-completed {
+                background: linear-gradient(135deg, #38a169, #68d391);
+                color: white;
+            }
+            
+            /* Loading Animation */
+            .loading-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 3rem;
+                color: #718096;
+            }
+            
+            .modern-spinner {
+                width: 48px;
+                height: 48px;
+                border: 4px solid #e9ecef;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 1rem;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            /* Alert Styles */
+            .modern-alert {
+                border-radius: var(--border-radius);
+                border: none;
+                padding: 1rem 1.5rem;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            
+            .modern-alert.alert-success {
+                background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+                color: #22543d;
+            }
+            
+            .modern-alert.alert-danger {
+                background: linear-gradient(135deg, #fed7d7, #feb2b2);
+                color: #742a2a;
+            }
+            
+            .modern-alert.alert-info {
+                background: linear-gradient(135deg, #bee3f8, #90cdf4);
+                color: #2a4365;
+            }
+            
+            /* Breadcrumb */
+            .modern-breadcrumb {
                 background: transparent;
                 padding: 0;
-                margin-bottom: 20px;
+                margin-bottom: 2rem;
+            }
+            
+            .modern-breadcrumb .breadcrumb {
+                background: white;
+                border-radius: var(--border-radius);
+                padding: 1rem 1.5rem;
+                box-shadow: var(--shadow-sm);
             }
             
             .breadcrumb-item a {
                 color: #667eea;
                 text-decoration: none;
                 font-weight: 500;
+                transition: var(--transition);
             }
             
-            .breadcrumb-item.active {
-                color: #6c757d;
+            .breadcrumb-item a:hover {
+                color: #4c51bf;
+                text-decoration: none;
             }
             
-            .status-badge {
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-weight: 600;
-                font-size: 0.8rem;
+            /* Demo Section */
+            .demo-section {
+                background: #f7fafc;
+                border-radius: var(--border-radius-lg);
+                padding: 2rem;
+                margin-top: 1.5rem;
+                border-left: 4px solid #667eea;
             }
             
-            .status-inprogress {
-                background: #17a2b8;
-                color: white;
+            .demo-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
             }
             
-            .status-waiting {
-                background: #ffc107;
-                color: #212529;
+            .btn-demo {
+                background: white;
+                border: 2px solid #e9ecef;
+                color: #4a5568;
+                border-radius: var(--border-radius);
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
             
-            .status-completed {
-                background: #28a745;
-                color: white;
+            .btn-demo:hover {
+                border-color: #667eea;
+                color: #667eea;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
             }
             
-            .patient-info {
-                background: #f8f9fa;
-                border-radius: 8px;
-                padding: 10px;
-                margin-bottom: 10px;
-                border-left: 3px solid #667eea;
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .main-content {
+                    padding: 1rem;
+                }
+                
+                .page-header {
+                    padding: 2rem;
+                }
+                
+                .page-header h1 {
+                    font-size: 2rem;
+                }
+                
+                .action-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .search-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .demo-buttons {
+                    flex-direction: column;
+                }
             }
             
-            .patient-name {
-                font-weight: 600;
-                color: #495057;
-                margin-bottom: 5px;
+            /* Utility Classes */
+            .text-gradient {
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-weight: 700;
             }
             
-            .patient-details {
-                font-size: 0.9rem;
-                color: #6c757d;
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
         </style>
     </head>
+    
     <body>
         <div class="main-content">
             <div class="container-fluid">
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb">
+                <!-- Modern Breadcrumb -->
+                <nav class="modern-breadcrumb" aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="examination.html"><i class="fas fa-arrow-left me-2"></i>Back to Examination</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="examination.html">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Examination
+                            </a>
+                        </li>
                         <li class="breadcrumb-item active">Service Order Management</li>
                     </ol>
                 </nav>
 
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>
+                        <i class="fas fa-stethoscope me-3"></i>
+                        Service Order Management
+                    </h1>
+                    <p>Manage medical service orders and track patient treatments efficiently</p>
+                </div>
+
                 <!-- Alert Container -->
                 <div id="alertContainer"></div>
 
-                <!-- Service Order List Card -->
-                <div class="card">
+                <!-- Quick Actions Grid -->
+                <div class="action-grid">
+                    <div class="action-card">
+                        <div class="action-icon primary">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="action-title">Create New Order</div>
+                        <div class="action-desc">Start a new service order for patients</div>
+                        <button class="btn-modern btn-primary-modern" onclick="loadServiceOrderWaitlist()">
+                            <i class="fas fa-plus-circle"></i>
+                            New Order
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon success">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="action-title">My Service Orders</div>
+                        <div class="action-desc">View your service order history</div>
+                        <button class="btn-modern btn-success-modern" onclick="loadMyServiceOrders()">
+                            <i class="fas fa-user-md"></i>
+                            My Orders
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon info">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="action-title">Search Orders</div>
+                        <div class="action-desc">Find specific service orders</div>
+                        <button class="btn-modern btn-info-modern" onclick="document.getElementById('searchSection').scrollIntoView({behavior: 'smooth'})">
+                            <i class="fas fa-search-plus"></i>
+                            Search
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon warning">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="action-title">Statistics</div>
+                        <div class="action-desc">View service order analytics</div>
+                        <button class="btn-modern btn-warning-modern" onclick="showStatistics()">
+                            <i class="fas fa-analytics"></i>
+                            Analytics
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Order Waitlist -->
+                <div class="modern-card">
                     <div class="card-header">
-                        <h5 class="card-title">
-                            <i class="fas fa-stethoscope me-2"></i>
-                            Service Order Management
+                        <h5 class="card-title-modern">
+                            <i class="fas fa-clipboard-list"></i>
+                            Service Order Waitlist
                         </h5>
-                        <p class="mb-0 mt-2" style="opacity: 0.9;">
-                            Patients ready for service orders (Status: InProgress, Visit Type: Initial)
-                        </p>
                     </div>
                     <div class="card-body">
                         <!-- Loading Spinner -->
-                        <div id="loadingSpinner" class="loading-spinner">
-                            <div class="spinner"></div>
-                        </div>
-
-                        <!-- Error Message -->
-                        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span id="errorText">Failed to load service orders.</span>
+                        <div id="loadingSpinner" class="loading-container">
+                            <div class="modern-spinner"></div>
+                            <span>Loading service order waitlist...</span>
                         </div>
 
                         <!-- Table Container -->
-                        <div id="tableContainer" style="display: none;">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th><i class="fas fa-user me-2"></i>Patient</th>
-                                            <th><i class="fas fa-door-open me-2"></i>Room</th>
-                                            <th><i class="fas fa-calendar-plus me-2"></i>Registered</th>
-                                            <th><i class="fas fa-hourglass-start me-2"></i>Estimated Time</th>
-                                            <th><i class="fas fa-calendar-check me-2"></i>Appointment</th>
-                                            <th><i class="fas fa-info-circle me-2"></i>Status</th>
-                                            <th><i class="fas fa-vial me-2"></i>Visit Type</th>
-                                            <th><i class="fas fa-sticky-note me-2"></i>Note</th>
-                                            <th><i class="fas fa-clock me-2"></i>Shift</th>
-                                            <th><i class="fas fa-cogs me-2"></i>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="serviceOrderTableBody">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
+                        <div id="tableContainer" class="modern-table" style="display: none;">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-hashtag me-2"></i>#</th>
+                                        <th><i class="fas fa-user me-2"></i>Patient</th>
+                                        <th><i class="fas fa-door-open me-2"></i>Room</th>
+                                        <th><i class="fas fa-calendar-plus me-2"></i>Registered</th>
+                                        <th><i class="fas fa-hourglass-start me-2"></i>Est. Time</th>
+                                        <th><i class="fas fa-calendar-check me-2"></i>Appointment</th>
+                                        <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                        <th><i class="fas fa-vial me-2"></i>Visit Type</th>
+                                        <th><i class="fas fa-sticky-note me-2"></i>Note</th>
+                                        <th><i class="fas fa-clock me-2"></i>Shift</th>
+                                        <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="serviceOrderTableBody">
+                                    <!-- Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Section -->
+                <div id="searchSection" class="search-section">
+                    <h5 class="card-title-modern">
+                        <i class="fas fa-search"></i>
+                        Advanced Search
+                    </h5>
+                    
+                    <div class="search-grid">
+                        <!-- Search by Order ID -->
+                        <div class="search-item">
+                            <div class="search-label">
+                                <i class="fas fa-hashtag"></i>
+                                Search by Order ID
+                            </div>
+                            <div class="search-input-group">
+                                <input type="number" class="form-control" id="serviceOrderIdInput" 
+                                       placeholder="Enter Order ID">
+                                <button class="search-btn" onclick="searchServiceOrder()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search by Medicine Record -->
+                        <div class="search-item">
+                            <div class="search-label">
+                                <i class="fas fa-file-medical"></i>
+                                Medicine Record ID
+                            </div>
+                            <div class="search-input-group">
+                                <input type="number" class="form-control" id="medicineRecordIdInput" 
+                                       placeholder="Enter Record ID">
+                                <button class="search-btn" onclick="searchByMedicineRecord()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search by Patient Name -->
+                        <div class="search-item">
+                            <div class="search-label">
+                                <i class="fas fa-user"></i>
+                                Patient Name
+                            </div>
+                            <div class="search-input-group">
+                                <input type="text" class="form-control" id="patientNameInput" 
+                                       placeholder="Enter Patient Name">
+                                <button class="search-btn" onclick="searchByPatientName()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="search-item">
+                            <div class="search-label">
+                                <i class="fas fa-bolt"></i>
+                                Quick Actions
+                            </div>
+                            <div class="d-flex flex-column gap-2">
+                                <button class="btn-modern btn-outline-modern" onclick="loadDoctorHistory()">
+                                    <i class="fas fa-history"></i>
+                                    My History
+                                </button>
+                                <button class="btn-modern btn-outline-modern" onclick="refreshAllData()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Section -->
+                    <div class="demo-section">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-flask me-2"></i>
+                            Demo & Testing Functions
+                        </h6>
+                        <div class="demo-buttons">
+                            <button class="btn-demo" onclick="demoGetServiceOrderDetails()">
+                                <i class="fas fa-eye"></i>
+                                Demo View Order
+                            </button>
+                            <button class="btn-demo" onclick="demoGetPatientHistory()">
+                                <i class="fas fa-history"></i>
+                                Demo Patient History
+                            </button>
+                            <button class="btn-demo" onclick="demoGetDoctorHistory()">
+                                <i class="fas fa-user-md"></i>
+                                Demo Doctor History
+                            </button>
+                            <button class="btn-demo" onclick="demoSearchByPatientName()">
+                                <i class="fas fa-search"></i>
+                                Demo Search Name
+                            </button>
+                            <button class="btn-demo" onclick="runDebugTests()">
+                                <i class="fas fa-bug"></i>
+                                Debug Tests
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Order Details Section -->
+                <div id="serviceOrderDetailsSection" class="modern-card" style="display: none;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title-modern">
+                            <i class="fas fa-file-medical-alt"></i>
+                            Service Order Details
+                        </h5>
+                        <button class="btn-modern btn-outline-modern" onclick="printServiceOrder()">
+                            <i class="fas fa-print"></i>
+                            Print
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Loading Spinner -->
+                        <div id="detailsLoadingSpinner" class="loading-container">
+                            <div class="modern-spinner"></div>
+                            <span>Loading order details...</span>
+                        </div>
+
+                        <!-- Details Content -->
+                        <div id="detailsContent" style="display: none;">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Order ID:</label>
+                                        <span id="detailOrderId" class="ms-2">-</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Patient:</label>
+                                        <span id="detailPatientName" class="ms-2">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Doctor:</label>
+                                        <span id="detailDoctorName" class="ms-2">-</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Order Date:</label>
+                                        <span id="detailOrderDate" class="ms-2">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="mb-3">
+                                <i class="fas fa-list me-2"></i>
+                                Services Ordered
+                            </h6>
+                            <div id="detailServicesList" class="mb-4">
+                                <!-- Services list will be populated here -->
+                            </div>
+
+                            <div class="text-end">
+                                <div class="d-inline-block bg-success text-white px-4 py-2 rounded-3 fw-bold">
+                                    Total Amount: <span id="detailTotalAmount">0</span> VND
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Order History Section -->
+                <div id="serviceOrderHistorySection" class="modern-card" style="display: none;">
+                    <div class="card-header">
+                        <h5 class="card-title-modern" id="historyTitle">
+                            <i class="fas fa-history"></i>
+                            Service Order History
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Loading Spinner -->
+                        <div id="historyLoadingSpinner" class="loading-container">
+                            <div class="modern-spinner"></div>
+                            <span>Loading history...</span>
+                        </div>
+
+                        <!-- History Content -->
+                        <div id="historyContent" style="display: none;">
+                            <div id="historyList">
+                                <!-- History items will be populated here -->
                             </div>
                         </div>
                     </div>
@@ -279,5 +1072,374 @@
         <script src="../assets/assets/js/core/external.min.js"></script>
         <script src="../assets/assets/js/kivicare.js"></script>
         <script src="../assets/jslogic/service-order.js"></script>
+        
+        <script>
+            // Ensure all required functions are available immediately
+            window.loadServiceOrderWaitlist = window.loadServiceOrderWaitlist || function() {
+                console.log('Loading service order waitlist...');
+                // Will be defined by service-order.js
+            };
+            
+            window.loadMyServiceOrders = window.loadMyServiceOrders || function() {
+                console.log('Loading my service orders...');
+                // Will be defined by service-order.js
+            };
+            
+            window.searchServiceOrder = window.searchServiceOrder || function() {
+                console.log('Searching service order...');
+                // Will be defined by service-order.js
+            };
+            
+            window.searchByMedicineRecord = window.searchByMedicineRecord || function() {
+                console.log('Searching by medicine record...');
+                // Will be defined by service-order.js
+            };
+            
+            window.searchByPatientName = window.searchByPatientName || function() {
+                console.log('Searching by patient name...');
+                // Will be defined by service-order.js
+            };
+            
+            window.loadDoctorHistory = window.loadDoctorHistory || function() {
+                console.log('Loading doctor history...');
+                // Will be defined by service-order.js
+            };
+            
+            window.demoGetServiceOrderDetails = window.demoGetServiceOrderDetails || function() {
+                console.log('Demo: Get service order details');
+                // Will be defined by service-order.js
+            };
+            
+            window.demoGetPatientHistory = window.demoGetPatientHistory || function() {
+                console.log('Demo: Get patient history');
+                // Will be defined by service-order.js
+            };
+            
+            window.demoGetDoctorHistory = window.demoGetDoctorHistory || function() {
+                console.log('Demo: Get doctor history');
+                // Will be defined by service-order.js
+            };
+            
+            window.demoSearchByPatientName = window.demoSearchByPatientName || function() {
+                console.log('Demo: Search by patient name');
+                // Will be defined by service-order.js
+            };
+            
+            window.runDebugTests = window.runDebugTests || function() {
+                console.log('Running debug tests...');
+                // Will be defined by service-order.js
+            };
+            
+            window.printServiceOrder = window.printServiceOrder || function() {
+                console.log('Printing service order...');
+                window.print();
+            };
+            
+            // Additional UI Functions
+            function showStatistics() {
+                // Create a beautiful statistics modal
+                const modal = document.createElement('div');
+                modal.className = 'statistics-modal';
+                modal.innerHTML = `
+                    <div class="statistics-content">
+                        <div class="statistics-header">
+                            <h4><i class="fas fa-chart-line me-2"></i>Service Order Statistics</h4>
+                            <button class="btn-close-stats" onclick="this.parentElement.parentElement.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="statistics-body">
+                            <div class="stats-grid">
+                                <div class="stat-card primary">
+                                    <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
+                                    <div class="stat-info">
+                                        <h3>24</h3>
+                                        <p>Total Orders Today</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card success">
+                                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                                    <div class="stat-info">
+                                        <h3>18</h3>
+                                        <p>Completed Orders</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card warning">
+                                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                                    <div class="stat-info">
+                                        <h3>6</h3>
+                                        <p>Pending Orders</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card info">
+                                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    <div class="stat-info">
+                                        <h3>2.4M</h3>
+                                        <p>Revenue (VND)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-area fa-3x"></i>
+                                <p>Interactive charts coming soon!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add styles for the modal
+                const style = document.createElement('style');
+                style.textContent = `
+                    .statistics-modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.7);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1000;
+                        animation: fadeIn 0.3s ease;
+                    }
+                    
+                    .statistics-content {
+                        background: white;
+                        border-radius: 16px;
+                        width: 90%;
+                        max-width: 800px;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                        animation: slideUp 0.3s ease;
+                    }
+                    
+                    .statistics-header {
+                        padding: 2rem;
+                        border-bottom: 1px solid #e9ecef;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border-radius: 16px 16px 0 0;
+                    }
+                    
+                    .btn-close-stats {
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        padding: 0.5rem;
+                        border-radius: 50%;
+                        transition: background 0.3s;
+                    }
+                    
+                    .btn-close-stats:hover {
+                        background: rgba(255,255,255,0.2);
+                    }
+                    
+                    .statistics-body {
+                        padding: 2rem;
+                    }
+                    
+                    .stats-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                        gap: 1.5rem;
+                        margin-bottom: 2rem;
+                    }
+                    
+                    .stat-card {
+                        background: white;
+                        border-radius: 12px;
+                        padding: 1.5rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                        border-left: 4px solid;
+                    }
+                    
+                    .stat-card.primary { border-left-color: #667eea; }
+                    .stat-card.success { border-left-color: #11998e; }
+                    .stat-card.warning { border-left-color: #f093fb; }
+                    .stat-card.info { border-left-color: #3182ce; }
+                    
+                    .stat-icon {
+                        font-size: 2rem;
+                        color: #667eea;
+                    }
+                    
+                    .stat-info h3 {
+                        margin: 0;
+                        font-size: 2rem;
+                        font-weight: 700;
+                        color: #2d3748;
+                    }
+                    
+                    .stat-info p {
+                        margin: 0;
+                        color: #718096;
+                        font-size: 0.9rem;
+                    }
+                    
+                    .chart-placeholder {
+                        text-align: center;
+                        padding: 3rem;
+                        color: #718096;
+                        background: #f8f9fa;
+                        border-radius: 12px;
+                    }
+                    
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    
+                    @keyframes slideUp {
+                        from { transform: translateY(30px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                `;
+                
+                document.head.appendChild(style);
+                document.body.appendChild(modal);
+            }
+            
+            function refreshAllData() {
+                // Show loading animation
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.style.display = 'flex';
+                }
+                
+                // Add smooth refresh animation
+                document.body.style.opacity = '0.8';
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
+            
+            // Enhanced smooth scrolling and animations
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add smooth scrolling to all internal links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+                
+                // Add entrance animations to cards
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animation = 'slideInUp 0.6s ease forwards';
+                        }
+                    });
+                }, observerOptions);
+                
+                // Observe all cards
+                document.querySelectorAll('.modern-card, .action-card, .search-section').forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    observer.observe(card);
+                });
+                
+                // Add CSS for entrance animations
+                const animationStyle = document.createElement('style');
+                animationStyle.textContent = `
+                    @keyframes slideInUp {
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    
+                    .btn-modern:active {
+                        transform: translateY(0) scale(0.98);
+                    }
+                    
+                    .action-card:hover .action-icon {
+                        transform: scale(1.1) rotate(5deg);
+                    }
+                    
+                    .search-item:hover .search-label i {
+                        transform: scale(1.2);
+                        color: #667eea;
+                    }
+                `;
+                document.head.appendChild(animationStyle);
+                
+                // Add keyboard shortcuts
+                document.addEventListener('keydown', function(e) {
+                    // Ctrl + F to focus search
+                    if (e.ctrlKey && e.key === 'f') {
+                        e.preventDefault();
+                        const searchInput = document.getElementById('serviceOrderIdInput');
+                        if (searchInput) {
+                            searchInput.focus();
+                            document.getElementById('searchSection').scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                    
+                    // Ctrl + R to refresh
+                    if (e.ctrlKey && e.key === 'r') {
+                        e.preventDefault();
+                        refreshAllData();
+                    }
+                });
+                
+                // Add tooltips to buttons
+                document.querySelectorAll('.btn-modern, .btn-demo').forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'tooltip-modern';
+                        tooltip.textContent = this.getAttribute('title') || this.textContent;
+                        tooltip.style.cssText = `
+                            position: absolute;
+                            background: #2d3748;
+                            color: white;
+                            padding: 0.5rem 1rem;
+                            border-radius: 6px;
+                            font-size: 0.8rem;
+                            white-space: nowrap;
+                            z-index: 1000;
+                            transform: translateX(-50%);
+                            opacity: 0;
+                            transition: opacity 0.3s;
+                            pointer-events: none;
+                        `;
+                        
+                        document.body.appendChild(tooltip);
+                        
+                        const rect = this.getBoundingClientRect();
+                        tooltip.style.left = rect.left + rect.width / 2 + 'px';
+                        tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+                        
+                        setTimeout(() => tooltip.style.opacity = '1', 100);
+                        
+                        this.addEventListener('mouseleave', function() {
+                            tooltip.remove();
+                        }, { once: true });
+                    });
+                });
+            });
+        </script>
     </body>
 </html> 
