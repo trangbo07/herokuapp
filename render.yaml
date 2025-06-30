@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: healthcare-management-system
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ENV
+        value: production
+      - key: DATABASE_URL
+        value: postgresql://healthcare_user:qeHJQMpooeNMjBqVZkuKWL8VPnO2IdV1@dpg-d1h425idbo4c739tq50g-a.oregon-postgres.render.com/healthcare_system
+      - key: PORT
+        value: 8080

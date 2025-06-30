@@ -1,0 +1,16 @@
+# Healthcare Management System - Environment Configuration Template
+# Copy this content to create a .env file
+
+# Environment (production/development)
+ENV=production
+
+# Database Configuration
+DATABASE_URL=postgresql://healthcare_user:qeHJQMpooeNMjBqVZkuKWL8VPnO2IdV1@dpg-d1h425idbo4c739tq50g-a/healthcare_system
+
+# Application Configuration
+APP_ENV=production
+PORT=8080
+
+# VNPay Configuration (if needed)
+VNPAY_RETURN_URL=https://your-app.herokuapp.com/api/vnpay/return
+VNPAY_NOTIFY_URL=https://your-app.herokuapp.com/api/vnpay/notify 
