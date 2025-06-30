@@ -1,1 +1,1 @@
-web: bash start.sh 
+web: java -Xmx512m -jar target/dependency/webapp-runner.jar --port $PORT target/SWP391-1.0-SNAPSHOT.war 
