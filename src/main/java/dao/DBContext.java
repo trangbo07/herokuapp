@@ -1,21 +1,10 @@
 package dao;
+import config.DatabaseConfig;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBContext {
     private static final DBContext instance = new DBContext();
-
-    private final String user = "sa";
-    private final String password = "123";
-    private final String url = "jdbc:sqlserver://localhost:1433;databaseName=HealthCareSystem;TrustServerCertificate=true";
-
-    static {
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
     private DBContext() {}
 
@@ -25,8 +14,8 @@ public class DBContext {
 
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(url, user, password);
-        } catch (Exception e) {
+            return DatabaseConfig.getConnection();
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
