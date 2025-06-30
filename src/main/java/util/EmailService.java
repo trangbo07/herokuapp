@@ -5,8 +5,10 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 public class EmailService {
-    private static final String FROM = "trangnkhe186034@fpt.edu.vn";
-    private static final String PASSWORD = "wdlh xokg dizk qdhl"; // App Password từ Gmail
+    private static final String FROM = System.getenv("EMAIL_FROM") != null ? 
+        System.getenv("EMAIL_FROM") : "trangnkhe186034@fpt.edu.vn";
+    private static final String PASSWORD = System.getenv("EMAIL_PASSWORD") != null ? 
+        System.getenv("EMAIL_PASSWORD") : "your-app-password"; // Set via environment variable
 
     public static boolean sendEmail(String to, String subject, String content) {
         Properties props = new Properties();
